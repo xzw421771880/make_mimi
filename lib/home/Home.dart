@@ -2,6 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:make_mimi/config/router_utils.dart';
+import 'package:make_mimi/home/ComplainCenter.dart';
+import 'package:make_mimi/home/Information.dart';
+import 'package:make_mimi/home/Invite.dart';
 import 'package:make_mimi/home/Notice.dart';
 import 'package:make_mimi/home/set/Setup.dart';
 
@@ -94,6 +97,7 @@ class _HomeState extends State<Home> {
             child: GestureDetector(
               onTap: (){
                 print('个人信息');
+                Route_all.push(context, Information());
               },
               child: Container(
                 color: Colors.white,
@@ -151,15 +155,15 @@ class _HomeState extends State<Home> {
         child: GestureDetector(
           onTap: (){
             print('------${i}');
-//            if(i == 0){//新品推荐
-//              Route_all.push(context, NewProduct());
-//            }else if(i == 1){//限时特惠
+            if(i == 0){//邀请好友
+              Route_all.push(context, Invite());
+            }else if(i == 1){//限时特惠
 //              Route_all.push(context, LimitTime());
-//            }else if(i == 2){//秒杀专场
-//              Route_all.push(context, SecondsKill());
-//            }else if(i == 3){//领优惠券
+            }else if(i == 2){//申诉中心
+              Route_all.push(context, ComplainCenter());
+            }else if(i == 3){//领优惠券
 //              Route_all.push(context, GetCoupon());
-//            }
+            }
           },
           child: Container(
             color: Colors.white,

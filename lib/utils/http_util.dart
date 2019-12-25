@@ -1,7 +1,10 @@
 
 
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:make_mimi/api/river_api.dart';
+import 'package:make_mimi/utils/Help.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Dio dio;
@@ -18,51 +21,59 @@ class HttpUtil {
     }
     return _httpUtil;
   }
+  getHeaders () {
+    return {
+      'Accept':'application/json, text/plain, */*',
+      'Content-Type':'application/json',
+//      'Authorization':"**",
+      'User-Aagent':"4.1.0;android;6.0.1;default;A001",
+      "HZUID":"2",
+    };
+  }
 
   HttpUtil() {
     BaseOptions options = BaseOptions(
+//      contentType: getHeaders(),
       connectTimeout: 5000,
       receiveTimeout: 5000,
+//      responseType: ResponseType.plain
     );
+
+//    options.contentType =  Headers.formUrlEncodedContentType;
     dio = new Dio(options);
-//    (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate = (client) {
-//      // config the http client
-//      client.findProxy = (uri) {
-//        //proxy all request to localhost:8888
-//        return "PROXY localhost:8888";
-//        return "118.31.124.185:8888";
-//      };
-//      // you can also create a new HttpClient to dio
-//      // return new HttpClient();
-//    };
+//    dio.options.contentType = Headers.acceptHeader;
+
 
     dio.interceptors
         .add(InterceptorsWrapper(onRequest: (RequestOptions options) async {
       print("========================请求数据===================1");
       print("url=${options.uri.toString()}");
       print('token ====');
+      print(options.contentType);
       print("params=${options.data}");
       dio.lock();
 
 
-      SharedPreferences sharedPreferences =
-      await SharedPreferences.getInstance();
-      String token = sharedPreferences.getString('token') ?? null;
+//      SharedPreferences sharedPreferences =
+//      await SharedPreferences.getInstance();
+//      String token = sharedPreferences.getString('token') ?? null;
+//
+//      print('token ====  ${token}');
 
-      print('token ====  ${token}');
-
-      String url = options.uri.toString().replaceAll(Api.BASE_URL+'/', "");
-      print(url);
-      List list = url.split('/');
-      print(list);
-      print('${list[0]}-----pppppppp');
-      if (list[0] == 'p'){
+//      String url = options.uri.toString().replaceAll(Api.BASE_URL+'/', "");
+//      print(url);
+//      List list = url.split('/');
+//      print(list);
+//      print('${list[0]}-----pppppppp');
+//      if (list[0] == 'p'){
+//        options.headers['Authorization'] = token;
+//      }
+     Helps().getToken().then((token) {
         options.headers['Authorization'] = token;
-      }
-//     await SharedPreferencesUtils.getToken().then((token) {
-//        options.headers['token'] = token;
-//      });
+      });
       dio.unlock();
+      print('options ====');
+//      print(options);
       return options;
     }, onResponse: (Response response) {
       print("========================请求数据===================2");
@@ -71,7 +82,7 @@ class HttpUtil {
     }, onError: (DioError error) {
       print("========================请求错误===================3");
       print("message---");
-      print("message =${error.message}");
+      print("message =${error}");
       print("message---");
       print("message =${error.response}=+=");
     }));
@@ -97,12 +108,18 @@ class HttpUtil {
       {Map<String, dynamic> parameters, Options options}) async {
     Response response;
     if (parameters != null && options != null) {
+      print('1');
       response = await dio.post(url, data: parameters, options: options);
     } else if (parameters != null && options == null) {
+      print('2');
       response = await dio.post(url, data: parameters);
+      print('2');
+      print(response);
     } else if (parameters == null && options != null) {
+      print('3');
       response = await dio.post(url, options: options);
     } else {
+      print('4');
       response = await dio.post(url);
     }
     print("message =${response}=+=-");
@@ -121,7 +138,7 @@ class HttpUtil {
     } else {
       response = await dio.post(url);
     }
-    print("message =${response}=+=-");
+    print("message =111${response}=+=-");
     return response;
   }
 

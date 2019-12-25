@@ -126,6 +126,7 @@ class _ChangPwdState extends State<ChangPwd> {
             child: TextField(
 //              style: TextStyle(textBaseline: TextBaseline.alphabetic),
               cursorColor: Colors.grey,
+              keyboardType: TextInputType.visiblePassword,
               decoration:  new InputDecoration(
                 hintText: hintList[index],
                 contentPadding: EdgeInsets.only(top: 14,bottom: 0),

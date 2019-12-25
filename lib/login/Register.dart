@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:make_mimi/config/router_utils.dart';
 import 'package:make_mimi/login/Certification.dart';
+import 'package:make_mimi/utils/Help.dart';
 import 'package:make_mimi/utils/com_service.dart';
+import 'package:make_mimi/utils/showtoast_util.dart';
 
 
 class Register extends StatefulWidget {
@@ -15,7 +17,7 @@ class Register extends StatefulWidget {
 
 class _RegisterState extends State<Register> {
 
-  int sex = 0;
+  int sex = 1;
 
   String buttonText = '发送验证码'; //初始文本
   bool isButtonEnable = true; //按钮状态  是否可点击
@@ -24,6 +26,8 @@ class _RegisterState extends State<Register> {
 
   String mobile;
   String password;
+  String comfirmPassword;
+  String icq;
   String inviteCode;
   String msgCode;
 
@@ -152,6 +156,7 @@ class _RegisterState extends State<Register> {
     List hintList = ['你的已实名手机号','请输入验证码','请输入6-9位密码（数字字母）','请再次输入6-9位密码（数字字母）','请输入你的QQ用于联系','请输入邀请码'];
 
 
+    List<TextInputType> inputList = [TextInputType.phone,TextInputType.phone,TextInputType.visiblePassword,TextInputType.visiblePassword,TextInputType.phone,TextInputType.visiblePassword];
     return Container(
       height: 50,
       color: Colors.white,
@@ -176,6 +181,7 @@ class _RegisterState extends State<Register> {
             child: TextField(
 //              style: TextStyle(textBaseline: TextBaseline.alphabetic),
               cursorColor: Colors.grey,
+              keyboardType: inputList[index],
               decoration:  new InputDecoration(
                 hintText: hintList[index],
                 contentPadding: EdgeInsets.only(top: 14,bottom: 0),
@@ -186,6 +192,19 @@ class _RegisterState extends State<Register> {
               ),
               onChanged: (value){
 
+                if(index == 0){
+                  mobile = value;
+                }else if(index == 1){
+                  msgCode = value;
+                }else if(index == 2){
+                  password = value;
+                }else if(index == 3){
+                  comfirmPassword = value;
+                }else if(index == 4){
+                  icq = value;
+                }else{
+                  inviteCode = value;
+                }
               },
             ),
           ),
@@ -204,9 +223,9 @@ class _RegisterState extends State<Register> {
               onPressed: () {
 
                 if(isButtonEnable){
-                  isButtonEnable = false;
+
                   print('获取验证码');
-                  _initTimer();
+                  getCode();
                 }
 
 //                  Route_all.push(context, Login());
@@ -249,14 +268,14 @@ class _RegisterState extends State<Register> {
                 width: 80,
                 bottom: 0,
                 top: 0,
-                child: buildSexSel(0),
+                child: buildSexSel(1),
               ),
               Positioned(
                 left: 180,
                 width: 80,
                 bottom: 0,
                 top: 0,
-                child: buildSexSel(1),
+                child: buildSexSel(2),
               ),
               Positioned(
                 left: 5,
@@ -299,7 +318,7 @@ class _RegisterState extends State<Register> {
               bottom: 0,
               child: Container(
                 alignment: Alignment.centerLeft,
-                child: Text(index == 0?'男':'女'),
+                child: Text(index == 1?'男':'女'),
               ),
             )
           ],
@@ -354,32 +373,106 @@ class _RegisterState extends State<Register> {
     );
   }
 
-  nextCommit(){
+  getCode(){
 
-    Route_all.push(context, Certification());
+    if(mobile == null){
+      showToast('请输入手机号码');
+      return;
+    }
+    if (!Helps().isChinaPhoneLegal(mobile)){
+
+      showToast('手机号码格式不正确');
+      return;
+    }
+
+
+    isButtonEnable = false;
+    print('ok');
+
+    Map<String, dynamic> map = Map();
+
+    map.putIfAbsent("mobile", () => mobile);
+
+    print(map);
+
+    Com_Service().post(map, "/site/send-msg-code", (response) {
+      print("发送成功");
+
+      showToast('发送成功');
+      _initTimer();
+      print(response);
+    }, (fail) {
+      print("失败");
+    });
   }
 
-//    Map<String, dynamic> map = Map();
-//    map.putIfAbsent("mobile", () => mobile);
-//    map.putIfAbsent("password", () => password);
-//    map.putIfAbsent("inviteCode", () => inviteCode);
-//    map.putIfAbsent("msgCode", () => msgCode);
 
-//    map.putIfAbsent("mobile", () => '15669966761');
-//    map.putIfAbsent("password", () => '123456');
-//    map.putIfAbsent("inviteCode", () => '');
-//    map.putIfAbsent("msgCode", () => msgCode);
+  nextCommit(){
+
+//    if(msgCode == null){
+//      showToast('请输入验证码');
+//      return;
+//    }
 //
-//    print(map);
-//
-//    Com_Service().post(map, "/user/reg", (response) {
-//
-//      print("注册成功");
-//      print(response);
-//    }, (fail) {
-//      print("失败");
-//      Navigator.pop(context);
-//    });
-//  }
+//    if(msgCode.length < 6){
+//      showToast('请输入验证码');
+//      return;
+//    }
+
+    if(password == null){
+      showToast('请输入密码');
+      return;
+    }
+
+    if(password.length < 6){
+      showToast('密码长度不能小于6');
+      return;
+    }
+
+    if(comfirmPassword == null){
+      showToast('请再次输入密码');
+      return;
+    }
+
+    if(password != comfirmPassword){
+      showToast('两次密码输入不一致');
+      return;
+    }
+
+    if(icq == null){
+      showToast('请输入qq号');
+      return;
+    }
+
+
+
+
+    Map<String, dynamic> map = Map();
+
+    print('3333');
+    map.putIfAbsent("mobile", () => mobile);
+    map.putIfAbsent("password", () => password);
+    map.putIfAbsent("inviteCode", () => 'asEcfg');
+    map.putIfAbsent("msgCode", () => '888888');
+
+    map.putIfAbsent("icq", () => icq);
+    map.putIfAbsent("sex", () => sex);
+    map.putIfAbsent("agebracket", () => '16');
+
+
+    print(map);
+
+
+    Com_Service().post(map, "/user/reg", (response) {
+
+      print("注册成功");
+      print(response);
+      showToast('注册成功');
+      Navigator.pop(context);
+    }, (fail) {
+      print("失败");
+
+    });
+  }
 
 }

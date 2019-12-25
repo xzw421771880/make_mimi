@@ -1,5 +1,6 @@
 
 
+
 import 'package:dio/dio.dart';
 import 'package:make_mimi/api/river_api.dart';
 import 'package:make_mimi/utils/http_util.dart';
@@ -39,8 +40,9 @@ class Com_Service {
   Future post(Map<String, dynamic> parameters,String url, OnSuccess success,
       OnFail onFail) async {
     try {
-      Response response =
+      var response =
       await HttpUtil.instance.post(Api.BASE_URL+url,parameters: parameters);
+      print('成功');
       if (response.statusCode == 200) {
         success(response.data);
       } else if(response.statusCode == 400){
@@ -53,8 +55,8 @@ class Com_Service {
 //        onFail(response.);
       }
     } catch (e) {
+      print('失败');
       print(e);
-      print('-----400');
 //      print('400---${response.data}');
 //      onFail(Strings.SERVER_EXCEPTION);
 

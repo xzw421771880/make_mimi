@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:make_mimi/config/router_utils.dart';
 import 'package:make_mimi/login/Forget.dart';
 import 'package:make_mimi/login/Register.dart';
+import 'package:make_mimi/utils/Help.dart';
+import 'package:make_mimi/utils/com_service.dart';
+import 'package:make_mimi/utils/showtoast_util.dart';
 
 
 class Login extends StatefulWidget {
@@ -13,35 +16,13 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
 
+  String mobile;
+  String password;
 
   @override
   void initState() {
     super.initState();
-    getDetail();
   }
-
-  getDetail() {
-//    print("getuser --------------");
-//    Map<String, dynamic> map = Map();
-//    map.putIfAbsent("prodId", () => widget.productId);
-//    Com_Service().get(map, "/prod/prodInfo", (response) {
-//      print("商品详情");
-//      print(response);
-//
-//      detailData = response;
-//      Map model = detailData['skuList'][0];
-//      sku = model['skuName'].toString().replaceAll(" ", ',');
-//      price = model['price'].toString();
-//      imageStr = model['pic'];
-//      setState(() {
-//        print("更新");
-//      });
-////      print(meModel.balanceUsdt);
-//    }, (fail) {
-//
-//    });
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -104,9 +85,7 @@ class _LoginState extends State<Login> {
 
                 ),
                 onPressed: () {
-
-                  print('退出');
-//                  Route_all.push(context, Login());
+                  commitLogin();
                 },
               )
           )
@@ -142,6 +121,7 @@ class _LoginState extends State<Login> {
     List titleList = ['手机号','密码'];
     List hintList = ['请输入手机号','请输入密码'];
 
+    List<TextInputType> inputList = [TextInputType.phone,TextInputType.visiblePassword];
 
     return Container(
       height: 50,
@@ -166,6 +146,7 @@ class _LoginState extends State<Login> {
             child: TextField(
 //              style: TextStyle(textBaseline: TextBaseline.alphabetic),
               cursorColor: Colors.grey,
+              keyboardType: inputList[index],
               decoration:  new InputDecoration(
                 hintText: hintList[index],
                 contentPadding: EdgeInsets.only(top: 14,bottom: 0),
@@ -176,6 +157,11 @@ class _LoginState extends State<Login> {
               ),
               onChanged: (value){
 
+                if(index == 0){
+                  mobile = value;
+                }else {
+                  password = value;
+                }
               },
             ),
           ),
@@ -220,6 +206,49 @@ class _LoginState extends State<Login> {
         ),
       ),
     );
+  }
+
+  commitLogin(){
+
+    if(mobile == null){
+      showToast('请输入手机号码');
+      return;
+    }
+    if (!Helps().isChinaPhoneLegal(mobile)){
+
+      showToast('手机号码格式不正确');
+      return;
+    }
+
+    if(password == null){
+      showToast('请输入密码');
+      return;
+    }
+
+    if(password.length < 6){
+      showToast('密码长度不能小于6');
+      return;
+    }
+
+    Map<String, dynamic> map = Map();
+
+    print('3333');
+    map.putIfAbsent("mobile", () => mobile);
+    map.putIfAbsent("password", () => password);
+
+    print(map);
+
+    Com_Service().post(map, "/user/login", (response) {
+
+      print("登录成功");
+      print(response);
+      showToast('登录成功');
+      Helps().saveToke(response['data']['token']);
+      Navigator.pop(context);
+    }, (fail) {
+      print("失败");
+
+    });
   }
 
 }
