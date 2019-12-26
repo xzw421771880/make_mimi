@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:make_mimi/config/router_utils.dart';
-import 'package:make_mimi/home/set/ChangPwd.dart';
-import 'package:make_mimi/home/set/FeedBack.dart';
-import 'package:make_mimi/login/login.dart';
+import 'package:make_mimi/utils/RefundReason.dart';
 
 
-class Setup extends StatefulWidget {
+class CancelOrder extends StatefulWidget {
 
 
   @override
-  _SetupState createState() => _SetupState();
+  _CancelOrderState createState() => _CancelOrderState();
 }
 
-class _SetupState extends State<Setup> {
+class _CancelOrderState extends State<CancelOrder> {
 
 
+  String reson;
   @override
   void initState() {
     super.initState();
@@ -51,7 +49,7 @@ class _SetupState extends State<Setup> {
       appBar: AppBar(
 //        textTheme: TextTheme(subtitle: "充币"),
         backgroundColor: Colors.white,
-        title: Text('设置', style: TextStyle(fontSize: 15,
+        title: Text('取消订单', style: TextStyle(fontSize: 15,
           fontWeight: FontWeight.bold,
           color: Color(0xff333333),),),
         leading: new IconButton(icon: Icon(Icons.arrow_back_ios),
@@ -71,10 +69,9 @@ class _SetupState extends State<Setup> {
               child:ListView(
 
                 children: <Widget>[
-                  buildCell(0),
-                  buildCell(1),
-                  buildWx(),
-                  buildWarn()
+                  buildTextField(),
+                  buildCell(),
+
                 ],
               )
           ),
@@ -86,13 +83,12 @@ class _SetupState extends State<Setup> {
               child: MaterialButton(
                 color: Colors.blue,
                 textColor: Colors.white,
-                child: new Text('退出', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,),
+                child: new Text('确认取消', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,),
 
                 ),
                 onPressed: () {
 
-                  print('退出');
-                  Route_all.push(context, Login());
+                  print('确认取消');
                 },
               )
           )
@@ -104,22 +100,26 @@ class _SetupState extends State<Setup> {
 
 
 
-  Widget buildCell(int index){
+  Widget buildCell(){
 
-    List titleList = ['修改密码','留言反馈'];
 
 
     return GestureDetector(
       onTap: (){
 
-        if(index == 0){
-          print('修改登录密码');
-          Route_all.push(context, ChangPwd());
-        }else{
+        print('xz');
+        showDialog(
+            context: context,
+            builder: (BuildContext context){
+              return RefundReason((resonBack){
 
-          print('留言反馈');
-          Route_all.push(context, FeedBackVc());
-        }
+                reson = resonBack;
+                setState(() {
+
+                });
+              });
+            }
+        );
       },
       child: Container(
 
@@ -134,7 +134,17 @@ class _SetupState extends State<Setup> {
               width: 150,
               child: Container(
                 alignment: Alignment.centerLeft,
-                child: Text(titleList[index]),
+                child: Text('取消原因'),
+              ),
+            ),
+            Positioned(
+              left: 100,
+              right: 15,
+              top: 0,
+              bottom: 0,
+              child: Container(
+                alignment: Alignment.centerLeft,
+                child: Text(reson == null? '请选择':reson),
               ),
             ),
             Positioned(
@@ -159,33 +169,44 @@ class _SetupState extends State<Setup> {
     );
   }
 
-  Widget buildWx(){
+  Widget buildTextField(){
 
 
     return Container(
-
       height: 50,
       color: Colors.white,
       child: Stack(
         children: <Widget>[
           Positioned(
             left: 15,
+            width: 80,
             top: 0,
             bottom: 0,
-            width: 150,
             child: Container(
               alignment: Alignment.centerLeft,
-              child: Text('客服微信'),
+              child: Text('任务编号'),
             ),
           ),
           Positioned(
-            right: 20,
+            left: 100,
+            right: 15,
             top: 0,
             bottom: 0,
-            width: 150,
-            child: Container(
-              alignment: Alignment.centerRight,
-              child: Text('1242332'),
+            child: TextField(
+//              style: TextStyle(textBaseline: TextBaseline.alphabetic),
+              cursorColor: Colors.grey,
+              keyboardType: TextInputType.visiblePassword,
+              decoration:  new InputDecoration(
+                hintText: '请输入要取消的编号',
+                contentPadding: EdgeInsets.only(top: 14,bottom: 0),
+                border: InputBorder.none,
+                hintStyle: TextStyle(
+                  fontSize: 14,
+                ),
+              ),
+              onChanged: (value){
+
+              },
             ),
           ),
           Positioned(
@@ -202,51 +223,6 @@ class _SetupState extends State<Setup> {
     );
   }
 
-  Widget buildWarn(){
-
-
-    return Container(
-
-      height: 50,
-      color: Colors.white,
-      child: Stack(
-        children: <Widget>[
-          Positioned(
-            left: 15,
-            top: 0,
-            bottom: 0,
-            width: 150,
-            child: Container(
-              alignment: Alignment.centerLeft,
-              child: Text('任务提示音'),
-            ),
-          ),
-          Positioned(
-            right: 10,
-            top: 0,
-            bottom: 0,
-            width: 60,
-            child: Switch(
-                value: true,
-                activeColor: Colors.green,
-                onChanged: (bool value){
-
-                }
-            ),
-          ),
-          Positioned(
-            right: 5,
-            left: 5,
-            bottom: 1,
-            height: .5,
-            child: Container(
-              color: Color(0xffcccccc),
-            ),
-          )
-        ],
-      ),
-    );
-  }
 
 
 }

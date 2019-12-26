@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:make_mimi/config/router_utils.dart';
-import 'package:make_mimi/home/CommissionRecord.dart';
+import 'package:make_mimi/home/Complain/CommissionRecord.dart';
 
 
 class InviteRecord extends StatefulWidget {

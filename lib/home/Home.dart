@@ -2,10 +2,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:make_mimi/config/router_utils.dart';
-import 'package:make_mimi/home/ComplainCenter.dart';
+import 'package:make_mimi/home/Complain/ComplainCenter.dart';
 import 'package:make_mimi/home/Information.dart';
 import 'package:make_mimi/home/Invite.dart';
 import 'package:make_mimi/home/Notice.dart';
+import 'package:make_mimi/home/Order/TaskOrder.dart';
+import 'package:make_mimi/home/blind/Blind.dart';
 import 'package:make_mimi/home/set/Setup.dart';
 
 class Home extends StatefulWidget {
@@ -161,8 +163,8 @@ class _HomeState extends State<Home> {
 //              Route_all.push(context, LimitTime());
             }else if(i == 2){//申诉中心
               Route_all.push(context, ComplainCenter());
-            }else if(i == 3){//领优惠券
-//              Route_all.push(context, GetCoupon());
+            }else if(i == 3){//账号绑定
+              Route_all.push(context, Blind());
             }
           },
           child: Container(
@@ -277,6 +279,7 @@ class _HomeState extends State<Home> {
     return GestureDetector(
       onTap: (){
         print('我的任务');
+        Route_all.push(context, TaskOrder());
       },
       child: Container(
         color: Colors.white,
