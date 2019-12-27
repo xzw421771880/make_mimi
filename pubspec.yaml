@@ -50,6 +50,7 @@ flutter:
   assets:
     - images/login/
     - images/home/
+    - images/order/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

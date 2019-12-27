@@ -6,8 +6,11 @@ import 'package:make_mimi/home/Complain/ComplainCenter.dart';
 import 'package:make_mimi/home/Information.dart';
 import 'package:make_mimi/home/Invite.dart';
 import 'package:make_mimi/home/Notice.dart';
+import 'package:make_mimi/home/Order/ReciverOrder.dart';
 import 'package:make_mimi/home/Order/TaskOrder.dart';
 import 'package:make_mimi/home/blind/Blind.dart';
+import 'package:make_mimi/home/money/Draw.dart';
+import 'package:make_mimi/home/money/Topup.dart';
 import 'package:make_mimi/home/set/Setup.dart';
 
 class Home extends StatefulWidget {
@@ -246,19 +249,38 @@ class _HomeState extends State<Home> {
                   child: Text(numberList[i],textAlign: TextAlign.center,style: TextStyle(fontSize: 17,fontWeight: FontWeight.bold),),
                 ),
                 Positioned(
-                  left: 0,
+                  width: 50,
                   right: 15,
                   height: 20,
                   top: 95,
                   child: GestureDetector(
                     onTap: (){
                       print('提现');
+                      Route_all.push(context, Draw());
                     },
                     child: Container(
+                      color: Colors.white,
                       child: Text('提现',textAlign: TextAlign.right,),
                     ),
                   ),
-                )
+                ),
+                i == 2?
+                Positioned(
+                  width: 50,
+                  left: 15,
+                  height: 20,
+                  top: 95,
+                  child: GestureDetector(
+                    onTap: (){
+                      print('充值');
+                      Route_all.push(context, Topup());
+                    },
+                    child: Container(
+                      color: Colors.white,
+                      child: Text('充值',textAlign: TextAlign.left,),
+                    ),
+                  ),
+                ):Container()
               ],
             ),
           ),
@@ -396,6 +418,7 @@ class _HomeState extends State<Home> {
               padding: EdgeInsets.all(0),
               onPressed: (){
 
+                Route_all.push(context, ReciverOrder());
               },
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(40)),
