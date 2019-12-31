@@ -12,12 +12,14 @@ class Helps{
   saveToke(String token) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('token', token);
+    getToken();
   }
 
   getToken() async{
     SharedPreferences sharedPreferences =
     await SharedPreferences.getInstance();
     String token = sharedPreferences.getString('token');
+    print(token);
     return token;
   }
 

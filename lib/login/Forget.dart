@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:make_mimi/config/router_utils.dart';
 import 'package:make_mimi/login/Certification.dart';
+import 'package:make_mimi/utils/Help.dart';
 import 'package:make_mimi/utils/com_service.dart';
+import 'package:make_mimi/utils/showtoast_util.dart';
 
 
 class Forget extends StatefulWidget {
@@ -15,7 +17,6 @@ class Forget extends StatefulWidget {
 
 class _ForgetState extends State<Forget> {
 
-  int sex = 0;
 
   String buttonText = '发送验证码'; //初始文本
   bool isButtonEnable = true; //按钮状态  是否可点击
@@ -24,7 +25,7 @@ class _ForgetState extends State<Forget> {
 
   String mobile;
   String password;
-  String inviteCode;
+  String comfirmPassword;
   String msgCode;
 
 
@@ -89,7 +90,7 @@ class _ForgetState extends State<Forget> {
       appBar: AppBar(
 //        textTheme: TextTheme(subtitle: "充币"),
         backgroundColor: Colors.white,
-        title: Text('注册', style: TextStyle(fontSize: 15,
+        title: Text('忘记登录密码', style: TextStyle(fontSize: 15,
           fontWeight: FontWeight.bold,
           color: Color(0xff333333),),),
         leading: new IconButton(icon: Icon(Icons.arrow_back_ios),
@@ -182,6 +183,15 @@ class _ForgetState extends State<Forget> {
               ),
               onChanged: (value){
 
+                if(index == 0){
+                  mobile = value;
+                }else if(index == 1){
+                  msgCode = value;
+                }else if(index == 2){
+                  password = value;
+                }else if(index == 3){
+                  comfirmPassword = value;
+                }
               },
             ),
           ),
@@ -200,9 +210,8 @@ class _ForgetState extends State<Forget> {
               onPressed: () {
 
                 if(isButtonEnable){
-                  isButtonEnable = false;
                   print('获取验证码');
-                  _initTimer();
+                  getCode();
                 }
 
 //                  Route_all.push(context, Login());
@@ -223,33 +232,98 @@ class _ForgetState extends State<Forget> {
     );
   }
 
+  getCode(){
+
+    if(mobile == null){
+      showToast('请输入手机号码');
+      return;
+    }
+    if (!Helps().isChinaPhoneLegal(mobile)){
+
+      showToast('手机号码格式不正确');
+      return;
+    }
+
+
+    isButtonEnable = false;
+    print('ok');
+
+    Map<String, dynamic> map = Map();
+
+    map.putIfAbsent("mobile", () => mobile);
+
+    print(map);
+
+    Com_Service().post(map, "/site/send-msg-code", (response) {
+      print("发送成功");
+
+      showToast('发送成功');
+      _initTimer();
+      print(response);
+    }, (fail) {
+      print("失败");
+    });
+  }
+
 
   nextCommit(){
 
-    Route_all.push(context, Certification());
+//    if(msgCode == null){
+//      showToast('请输入验证码');
+//      return;
+//    }
+//
+//    if(msgCode.length < 6){
+//      showToast('请输入验证码');
+//      return;
+//    }
+
+    if(password == null){
+      showToast('请输入密码');
+      return;
+    }
+
+    if(password.length < 6){
+      showToast('密码长度不能小于6');
+      return;
+    }
+
+    if(comfirmPassword == null){
+      showToast('请再次输入密码');
+      return;
+    }
+
+    if(password != comfirmPassword){
+      showToast('两次密码输入不一致');
+      return;
+    }
+
+
+
+
+
+    Map<String, dynamic> map = Map();
+
+    print('3333');
+    map.putIfAbsent("mobile", () => mobile);
+    map.putIfAbsent("newPassword", () => password);
+    map.putIfAbsent("msgCode", () => '888888');
+
+
+
+    print(map);
+
+
+    Com_Service().post(map, "/user/forgot-password", (response) {
+
+      print("找回成功");
+      print(response);
+      showToast('找回成功');
+      Navigator.pop(context);
+    }, (fail) {
+      print("失败");
+
+    });
   }
-
-//    Map<String, dynamic> map = Map();
-//    map.putIfAbsent("mobile", () => mobile);
-//    map.putIfAbsent("password", () => password);
-//    map.putIfAbsent("inviteCode", () => inviteCode);
-//    map.putIfAbsent("msgCode", () => msgCode);
-
-//    map.putIfAbsent("mobile", () => '15669966761');
-//    map.putIfAbsent("password", () => '123456');
-//    map.putIfAbsent("inviteCode", () => '');
-//    map.putIfAbsent("msgCode", () => msgCode);
-//
-//    print(map);
-//
-//    Com_Service().post(map, "/user/reg", (response) {
-//
-//      print("注册成功");
-//      print(response);
-//    }, (fail) {
-//      print("失败");
-//      Navigator.pop(context);
-//    });
-//  }
 
 }

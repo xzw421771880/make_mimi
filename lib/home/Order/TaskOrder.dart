@@ -9,14 +9,15 @@ import 'package:make_mimi/utils/XjSelete.dart';
 
 class TaskOrder extends StatefulWidget {
 
-
+  int currentIndex = 0;
+  TaskOrder(this.currentIndex);
   @override
   _TaskOrderState createState() => _TaskOrderState();
 }
 
 class _TaskOrderState extends State<TaskOrder> {
 
-  int currentIndex = 0;
+
 
   @override
   void initState() {
@@ -81,13 +82,13 @@ class _TaskOrderState extends State<TaskOrder> {
               height: 40,
               child: XjSelete(['全部','待处理','进行中','审核中','已完成','已拒绝','已超时'], (index){
 
-                currentIndex = index;
+                widget.currentIndex = index;
                 print(index);
 //                _pullToRefresh();
                 setState(() {
 
                 });
-              }, currentIndex)
+              }, widget.currentIndex)
           ),
           Positioned(
               left: 0,

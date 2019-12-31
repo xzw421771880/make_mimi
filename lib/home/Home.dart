@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:make_mimi/config/router_utils.dart';
 import 'package:make_mimi/home/Complain/ComplainCenter.dart';
+import 'package:make_mimi/home/HelpCenter.dart';
 import 'package:make_mimi/home/Information.dart';
 import 'package:make_mimi/home/Invite.dart';
 import 'package:make_mimi/home/Notice.dart';
@@ -12,6 +13,7 @@ import 'package:make_mimi/home/blind/Blind.dart';
 import 'package:make_mimi/home/money/Draw.dart';
 import 'package:make_mimi/home/money/Topup.dart';
 import 'package:make_mimi/home/set/Setup.dart';
+import 'package:make_mimi/utils/com_service.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -20,6 +22,34 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
 
+  Map  user;
+  @override
+  void initState() {
+    super.initState();
+    getInfo();
+  }
+
+  getInfo() {
+    print("getuser --------------");
+    Com_Service().post(Map(), "/user/info", (response) {
+      print("商品详情");
+      print(response);
+
+      user = response;
+      setState(() {
+        print("更新");
+      });
+//      print(meModel.balanceUsdt);
+    }, (fail) {
+
+    });
+  }
+
+  //下拉
+  Future _pullToRefresh() async {
+    getInfo();
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +60,7 @@ class _HomeState extends State<Home> {
       body:  MediaQuery.removePadding(
         removeTop: true,
         context: context,
-        child:  ListView(
+        child:  RefreshIndicator(child: ListView(
           children: <Widget>[
             buildInfo(),
             buildTitle(),
@@ -40,12 +70,25 @@ class _HomeState extends State<Home> {
             buildTaskStatus(),
             buildCommit()
           ],
-        ),
+        ), onRefresh:_pullToRefresh),
       )
     );
   }
 
+
+
   Widget buildInfo(){
+    String name = '游客';
+    String  phone = '暂无';
+
+    if (user !=null){
+      if(user['realName'] != null){
+        name = user['realName'];
+      }else{
+        name = user['mobile'].toString();
+      }
+      phone = user['mobile'].toString().substring(0,3)+"****"+user['mobile'].toString().substring(7,11);
+    }
 
     return Container(
       color: Colors.white,
@@ -119,12 +162,12 @@ class _HomeState extends State<Home> {
                     Positioned(
                       left: 110,
                       top: 20,
-                      child: Text('张**',style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),),
+                      child: Text(name,style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),),
                     ),
                     Positioned(
                       left: 110,
                       top: 55,
-                      child: Text('135****2514',style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),),
+                      child: Text(phone,style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),),
                     ),
                     Positioned(
                       right: 20,
@@ -162,8 +205,8 @@ class _HomeState extends State<Home> {
             print('------${i}');
             if(i == 0){//邀请好友
               Route_all.push(context, Invite());
-            }else if(i == 1){//限时特惠
-//              Route_all.push(context, LimitTime());
+            }else if(i == 1){//帮助中心
+              Route_all.push(context, HelpCenter());
             }else if(i == 2){//申诉中心
               Route_all.push(context, ComplainCenter());
             }else if(i == 3){//账号绑定
@@ -301,7 +344,7 @@ class _HomeState extends State<Home> {
     return GestureDetector(
       onTap: (){
         print('我的任务');
-        Route_all.push(context, TaskOrder());
+        Route_all.push(context, TaskOrder(0));
       },
       child: Container(
         color: Colors.white,
@@ -358,15 +401,15 @@ class _HomeState extends State<Home> {
         child: GestureDetector(
           onTap: (){
             print('------${i}');
-//            if(i == 0){//新品推荐
-//              Route_all.push(context, NewProduct());
-//            }else if(i == 1){//限时特惠
-//              Route_all.push(context, LimitTime());
-//            }else if(i == 2){//秒杀专场
-//              Route_all.push(context, SecondsKill());
-//            }else if(i == 3){//领优惠券
-//              Route_all.push(context, GetCoupon());
-//            }
+            if(i == 0){//新品推荐
+              Route_all.push(context, TaskOrder(1));
+            }else if(i == 1){//限时特惠
+              Route_all.push(context, TaskOrder(2));
+            }else if(i == 2){//秒杀专场
+              Route_all.push(context, TaskOrder(3));
+            }else if(i == 3){//领优惠券
+              Route_all.push(context, TaskOrder(6));
+            }
           },
           child: Container(
             color: Colors.white,

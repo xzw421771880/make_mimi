@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:make_mimi/utils/com_service.dart';
+import 'package:make_mimi/utils/showtoast_util.dart';
 
 
 class ChangPwd extends StatefulWidget {
@@ -10,33 +12,14 @@ class ChangPwd extends StatefulWidget {
 
 class _ChangPwdState extends State<ChangPwd> {
 
+  String oldPass;
+  String newPass;
+  String againPass;
+
 
   @override
   void initState() {
     super.initState();
-    getDetail();
-  }
-
-  getDetail() {
-//    print("getuser --------------");
-//    Map<String, dynamic> map = Map();
-//    map.putIfAbsent("prodId", () => widget.productId);
-//    Com_Service().get(map, "/prod/prodInfo", (response) {
-//      print("商品详情");
-//      print(response);
-//
-//      detailData = response;
-//      Map model = detailData['skuList'][0];
-//      sku = model['skuName'].toString().replaceAll(" ", ',');
-//      price = model['price'].toString();
-//      imageStr = model['pic'];
-//      setState(() {
-//        print("更新");
-//      });
-////      print(meModel.balanceUsdt);
-//    }, (fail) {
-//
-//    });
   }
 
 
@@ -88,7 +71,7 @@ class _ChangPwdState extends State<ChangPwd> {
                 ),
                 onPressed: () {
 
-                  print('退出');
+                  commit();
                 },
               )
           )
@@ -137,12 +120,54 @@ class _ChangPwdState extends State<ChangPwd> {
               ),
               onChanged: (value){
 
+                if(index == 0){
+                  oldPass = value;
+                }else if(index == 1){
+                  newPass = value;
+                }else{
+                  againPass = value;
+                }
               },
             ),
           )
         ],
       ),
     );
+  }
+
+
+  commit(){
+
+
+    if(oldPass == null){
+      showToast('请输入原密码');
+      return;
+    }
+
+    if(newPass == null){
+      showToast('请输入新密码');
+      return;
+    }
+
+    if(newPass != againPass){
+      showToast('两次新密码不一致');
+      return;
+    }
+
+    print("提交");
+    Map<String, dynamic> map = Map();
+    map.putIfAbsent("oldPassword", () => oldPass);
+    map.putIfAbsent("newPassword", () => newPass);
+
+    Com_Service().post(map, "/user/change-password", (response){
+
+      print(response);
+      showToast("修改成功！");
+      Navigator.pop(context);
+    }, (fail){
+
+    });
+
   }
 
 

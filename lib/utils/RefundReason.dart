@@ -6,14 +6,15 @@ typedef backSelete(String reason);
 class RefundReason extends StatefulWidget {
 
   backSelete back;
-  RefundReason(this.back);
+  List data;
+  RefundReason(this.data,this.back);
   @override
   _RefundReasonState createState() => _RefundReasonState();
 }
 
 class _RefundReasonState extends State<RefundReason> {
 
-  List data = ['快递一直未送达','商品破损/少件','商品与描述不符'];
+//  List data = ['快递一直未送达','商品破损/少件','商品与描述不符'];
 
   @override
   void initState() {
@@ -63,7 +64,7 @@ class _RefundReasonState extends State<RefundReason> {
                             alignment: Alignment.centerLeft,
                             color: Color(0xffeeeeee),
                             height: 50,
-                            child: Text('      请选择取消原因',style: TextStyle(
+                            child: Text('      请选择',style: TextStyle(
                                 fontSize: 17
                             ),),
                           ),
@@ -74,7 +75,7 @@ class _RefundReasonState extends State<RefundReason> {
                           top: 50,
                           bottom: 0,
                           child: ListView.builder(
-                              itemCount: data.length,
+                              itemCount: widget.data.length,
                               itemBuilder:(BuildContext context,int index){
                                 return buildCell(context,index);
                               }
@@ -91,7 +92,7 @@ class _RefundReasonState extends State<RefundReason> {
 
   Widget buildCell(BuildContext context,int index){
 
-    String title = data[index];
+    String title = widget.data[index];
 
 
     return GestureDetector(

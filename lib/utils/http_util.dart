@@ -58,7 +58,7 @@ class HttpUtil {
 //      await SharedPreferences.getInstance();
 //      String token = sharedPreferences.getString('token') ?? null;
 //
-//      print('token ====  ${token}');
+
 
 //      String url = options.uri.toString().replaceAll(Api.BASE_URL+'/', "");
 //      print(url);
@@ -69,6 +69,7 @@ class HttpUtil {
 //        options.headers['Authorization'] = token;
 //      }
      Helps().getToken().then((token) {
+       print('token ====  ${token}');
         options.headers['Authorization'] = token;
       });
       dio.unlock();
@@ -101,7 +102,7 @@ class HttpUtil {
     } else {
       response = await dio.get(url);
     }
-    return response;
+    return response.data;
   }
 
   Future post(String url,
@@ -123,7 +124,7 @@ class HttpUtil {
       response = await dio.post(url);
     }
     print("message =${response}=+=-");
-    return response;
+    return response.data;
   }
 
   Future postStr(String url,
@@ -184,6 +185,6 @@ class HttpUtil {
     } else {
       response = await dio.post(url);
     }
-    return response;
+    return response.data;
   }
 }

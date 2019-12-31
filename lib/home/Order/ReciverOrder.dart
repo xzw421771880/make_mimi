@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:make_mimi/config/router_utils.dart';
+import 'package:make_mimi/home/Order/OperationOrder.dart';
+import 'package:make_mimi/home/blind/Blind.dart';
 import 'package:make_mimi/utils/OrderAlert.dart';
 
 
@@ -63,7 +66,7 @@ class _ReciverOrderState extends State<ReciverOrder> {
               child: Text('绑定账号', style: TextStyle(color: Color(0xff333333),),),
               onPressed: (){
                 print("111");
-//                Route_all.push(context, DrawRecord());
+                Route_all.push(context, Blind());
 
               },
             )
@@ -116,12 +119,12 @@ class _ReciverOrderState extends State<ReciverOrder> {
                   showDialog(
                       context: context,
                       builder: (BuildContext context){
-                        return OrderAlert((resonBack){
+                        return OrderAlert((index){
 
-//                          reson = resonBack;
-                          setState(() {
-
-                          });
+                          print(index);
+                          if (index == 2){
+                            Route_all.push(context, OperationOrder());
+                          }
                         });
                       }
                   );

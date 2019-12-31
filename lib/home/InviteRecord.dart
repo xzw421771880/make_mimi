@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:make_mimi/config/router_utils.dart';
 import 'package:make_mimi/home/Complain/CommissionRecord.dart';
+import 'package:make_mimi/utils/com_service.dart';
 
 
 class InviteRecord extends StatefulWidget {
@@ -13,33 +14,93 @@ class InviteRecord extends StatefulWidget {
 
 class _InviteRecordState extends State<InviteRecord> {
 
+  ScrollController _controller = new ScrollController();
+  Map mydata = Map();
+  List datalist = List();
+
+
+  int totalSize = 0; //总条数
+  String loadMoreText = "";
+  TextStyle loadMoreTextStyle =
+  new TextStyle(color: const Color(0xFF999999), fontSize: 14.0);
+  int currentPage = 1;
 
   @override
   void initState() {
     super.initState();
-    getDetail();
+    getData();
+
+    _controller.addListener(() {
+      var maxScroll = _controller.position.maxScrollExtent;
+      var pixel = _controller.position.pixels;
+//      print(maxScroll);
+//      print(pixel);
+      if (maxScroll == pixel) {
+        if (datalist.length < int.parse(mydata["count"])) {
+          print("更多");
+          setState(() {
+            loadMoreText = "正在加载中...";
+            loadMoreTextStyle =
+            new TextStyle(color: const Color(0xFF4483f6), fontSize: 14.0);
+          });
+          loadMoreData();
+        }
+      } else {
+        if (datalist.length == int.parse(mydata["count"])) {
+          loadMoreText = "没有更多数据";
+          loadMoreTextStyle =
+          new TextStyle(color: const Color(0xFF999999), fontSize: 14.0);
+          setState(() {
+
+          });
+        }
+      }
+    });
   }
 
-  getDetail() {
-//    print("getuser --------------");
-//    Map<String, dynamic> map = Map();
-//    map.putIfAbsent("prodId", () => widget.productId);
-//    Com_Service().get(map, "/prod/prodInfo", (response) {
-//      print("商品详情");
-//      print(response);
-//
-//      detailData = response;
-//      Map model = detailData['skuList'][0];
-//      sku = model['skuName'].toString().replaceAll(" ", ',');
-//      price = model['price'].toString();
-//      imageStr = model['pic'];
-//      setState(() {
-//        print("更新");
-//      });
-////      print(meModel.balanceUsdt);
-//    }, (fail) {
-//
-//    });
+  getData() {
+    Map<String, dynamic> map = Map();
+
+    map.putIfAbsent("page", () => currentPage);
+    map.putIfAbsent("pageSize", () => 20);
+
+    print(map);
+
+    Com_Service().post(map, "/user/invite", (response) {
+
+      print("邀请记录");
+      print(response);
+      mydata = response;
+      if (currentPage == 1){
+        datalist.clear();
+      }
+      datalist.addAll(response["list"]);
+      print(datalist.length);
+      setState(() {
+
+      });
+    }, (fail) {
+      print("失败");
+
+    });
+  }
+
+  //下拉
+  Future _pullToRefresh() async {
+    print("111");
+    loadMoreText = "";
+    currentPage = 1;
+    getData();
+    return null;
+  }
+
+  //加载列表数据
+  loadMoreData() async {
+    this.currentPage++;
+    print("more");
+    getData();
+//    var start = (currentPage - 1) * pageSize;
+
   }
 
 
@@ -60,17 +121,32 @@ class _InviteRecordState extends State<InviteRecord> {
             }),
         elevation: 0,
       ),
-      body: ListView.builder(
-          itemCount: 4,
-          itemBuilder: (BuildContext context,int index){
+      body: RefreshIndicator(
+        child: ListView.builder(
+            itemCount: datalist.length +3,
+            itemBuilder: (BuildContext context,int index){
 
-            if (index == 0){
-              return buildTitle();
-            }else{
-              return buildCells(index -1);
-            }
+              if (index == 0){
+                return buildTitle();
+              }else if (index == datalist.length +2){
+                return _buildProgressMoreIndicator();
+              }else{
+                return buildCells(index -1);
+              }
 
-          }
+            },
+            controller: _controller,
+        ),
+        onRefresh: _pullToRefresh,
+      ),
+    );
+  }
+
+  Widget _buildProgressMoreIndicator() {
+    return new Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: new Center(
+        child: new Text(loadMoreText, style: loadMoreTextStyle),
       ),
     );
   }
@@ -128,7 +204,7 @@ class _InviteRecordState extends State<InviteRecord> {
   Widget buildTitleSon(int index){
 
     List titleList = ['邀请人数','我的佣金'];
-    List numberList = ['10人','8'];
+    List numberList = ['${mydata['count']}人',mydata['totalRevenue'].toString()];
 
 
     return GestureDetector(
@@ -183,11 +259,15 @@ class _InviteRecordState extends State<InviteRecord> {
 
   Widget buildCells(int index){
 
+
     List<String> listStr =[];
     if (index == 0){
       listStr = ['手机号','姓名','注册时间'];
     }else{
-      listStr = ['18888888','张*','2019-10-10 10:10'];
+      Map user = datalist[index -1];
+
+      String dataStr  = strToDate(int.parse(user["created_at"]));
+      listStr = [user['mobile'].toString(),user['realname'] == null?'游客':user['realname'],dataStr];
     }
 
     List<Positioned>  list = getDataList(listStr);
@@ -216,7 +296,7 @@ class _InviteRecordState extends State<InviteRecord> {
   String strToDate(int dataStr){
     var date2 = DateTime.fromMillisecondsSinceEpoch(dataStr*1000);
     List<String> list  = date2.toString() .split('.');
-    print('------------------------时间戳转日期：${list[0]}');
+//    print('------------------------时间戳转日期：${list[0]}');
     return list[0];
   }
 

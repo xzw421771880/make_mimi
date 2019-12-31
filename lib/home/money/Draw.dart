@@ -247,7 +247,7 @@ class _DrawState extends State<Draw> {
         showDialog(
             context: context,
             builder: (BuildContext context){
-              return RefundReason((resonBack){
+              return RefundReason(['快递一直未送达','商品破损/少件','商品与描述不符'],(resonBack){
 
                 bank = resonBack;
                 setState(() {

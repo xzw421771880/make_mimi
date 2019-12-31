@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 
-typedef backSelete(String reason);
+typedef backSelete(int index);
 
 class OrderAlert extends StatefulWidget {
 
@@ -185,6 +185,8 @@ class _OrderAlertState extends State<OrderAlert> {
               color: Colors.grey,
               onPressed: (){
 
+                Navigator.pop(context);
+                widget.back(0);
               },
             ),
           ),
@@ -199,6 +201,8 @@ class _OrderAlertState extends State<OrderAlert> {
               color: Colors.grey,
               onPressed: (){
 
+                Navigator.pop(context);
+                widget.back(1);
               },
             ),
           ),
@@ -213,6 +217,9 @@ class _OrderAlertState extends State<OrderAlert> {
               color: Colors.blue,
               onPressed: (){
 
+                print('jj');
+                Navigator.pop(context);
+                widget.back(2);
               },
             ),
           )
