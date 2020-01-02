@@ -79,7 +79,7 @@ class _ReciverOrderState extends State<ReciverOrder> {
               left: 0,
               right: 0,
               top: 0,
-              bottom: 400,
+              bottom: 300,
               child:ListView(
 
                 children: <Widget>[
@@ -93,7 +93,7 @@ class _ReciverOrderState extends State<ReciverOrder> {
           Positioned(
               left: 0,
               bottom: MediaQuery.of(context).padding.bottom,
-              height: 400,
+              height: 300,
               right: 0,
               child:buildFoot(),
           )

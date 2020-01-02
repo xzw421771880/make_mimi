@@ -1,8 +1,12 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:make_mimi/utils/RefundReason.dart';
+import 'package:make_mimi/utils/com_service.dart';
+import 'package:make_mimi/utils/loading.dart';
+import 'package:make_mimi/utils/showtoast_util.dart';
 
 
 class CommitComplain extends StatefulWidget {
@@ -16,35 +20,36 @@ class _CommitComplainState extends State<CommitComplain> {
 
 
   String reson;
-  String word;
+  String taskNum;
+  String appealState;
   List<File> images = List<File>();
   List<String> imageStrs = List<String>();
+  List typeList = List();
   @override
   void initState() {
     super.initState();
-    getDetail();
+    getTypeList();
   }
 
-  getDetail() {
-//    print("getuser --------------");
-//    Map<String, dynamic> map = Map();
+  getTypeList() {
+    print("getuser --------------");
+    Map<String, dynamic> map = Map();
 //    map.putIfAbsent("prodId", () => widget.productId);
-//    Com_Service().get(map, "/prod/prodInfo", (response) {
-//      print("商品详情");
-//      print(response);
-//
-//      detailData = response;
-//      Map model = detailData['skuList'][0];
-//      sku = model['skuName'].toString().replaceAll(" ", ',');
-//      price = model['price'].toString();
-//      imageStr = model['pic'];
-//      setState(() {
-//        print("更新");
-//      });
-////      print(meModel.balanceUsdt);
-//    }, (fail) {
-//
-//    });
+    Com_Service().get(map, "/appeal/appeal-type", (response) {
+      print("商品详情");
+      print(response);
+
+      List list = response;
+      for (int i = 0;i<list.length;i++){
+        typeList.add(list[i]['appeal_type']);
+      }
+      setState(() {
+        print("更新");
+      });
+//      print(meModel.balanceUsdt);
+    }, (fail) {
+
+    });
   }
 
 
@@ -99,6 +104,7 @@ class _CommitComplainState extends State<CommitComplain> {
                 onPressed: () {
 
                   print('确认提交');
+                  imageAllUpdate();
                 },
               )
           )
@@ -121,7 +127,7 @@ class _CommitComplainState extends State<CommitComplain> {
         showDialog(
             context: context,
             builder: (BuildContext context){
-              return RefundReason(['快递一直未送达','商品破损/少件','商品与描述不符'],(resonBack){
+              return RefundReason(typeList,(resonBack){
 
                 reson = resonBack;
                 setState(() {
@@ -216,6 +222,7 @@ class _CommitComplainState extends State<CommitComplain> {
               ),
               onChanged: (value){
 
+                taskNum = value;
               },
             ),
           ),
@@ -264,7 +271,7 @@ class _CommitComplainState extends State<CommitComplain> {
         ),
         onChanged: (value){
           print(value);
-          word = value;
+          appealState = value;
         },
       ),
     );
@@ -377,7 +384,7 @@ class _CommitComplainState extends State<CommitComplain> {
 
   alert(){
     print("666");
-    if(images.length >=5){
+    if(images.length >=2){
 //      showToast("最多上传5张");
       return;
     }
@@ -434,6 +441,99 @@ class _CommitComplainState extends State<CommitComplain> {
     setState(() {
       images.add(image);
     });
+  }
+
+
+  imageAllUpdate(){
+    if(reson == null){
+      showToast("请选择申诉类型");
+      return;
+    }
+    if(taskNum == null||taskNum.length == 0){
+      showToast("请输入任务单号");
+      return;
+    }
+    if(appealState == null||appealState.length == 0){
+      showToast("请输入申诉说明");
+      return;
+    }
+    if(images.length > 0){
+      imageStrs = List<String> ();
+      showDialog<Null>(
+          context: context,
+          builder: (BuildContext context) {
+            return  LoadingDialog(false,"上传中");
+          }
+      );
+      for (int i = 0; i< images.length;i++){
+        _uploadImage(images[i]);
+      }
+    }else{
+      commit();
+    }
+
+  }
+
+  //上传图片到服务器
+  _uploadImage(File file) async {
+
+    String path = file.path;
+    var name1 = path.substring(path.lastIndexOf("/") + 1, path.length);
+    FormData formData = FormData.fromMap({
+      //"": "", //这里写其他需要传递的参数
+//      "file": zmImage,_
+      "file": await MultipartFile.fromFile(path,filename: name1),
+    });
+
+    Com_Service().POSTIMAGE(formData, "/site/upload-image", (response){
+
+      print(response);
+      imageStrs.add(response["url"]);
+      print("已添加");
+      print(images.length);
+      print(imageStrs.length);
+      if(images.length == imageStrs.length){
+        print("已加满");
+        Navigator.pop(context);
+        commit();
+      }
+
+//      if (file == zmImage){
+//        zmStr = response["data"]["url"];
+//      }else{
+//        fmStr = response["data"]["url"];
+//      }
+//      setIdentity();
+
+    }, (fail){
+
+    });
+  }
+
+  commit(){
+
+
+    print("999");
+    String img = imageStrs.join(",");
+    print(img);
+
+    print("提交");
+    Map<String, dynamic> map = Map();
+    map.putIfAbsent("taskNum", () => taskNum);
+    map.putIfAbsent("appealState", () => appealState);
+    map.putIfAbsent("appeal_type", () => reson);
+    map.putIfAbsent("appealImg", () => img);
+
+    Com_Service().post(map, "/appeal/submit-appeal", (response){
+
+      print("申诉成功");
+      print(response);
+      showToast("申诉成功！！！");
+      Navigator.pop(context);
+    }, (fail){
+
+    });
+
   }
 
 

@@ -280,7 +280,7 @@ class _FeedBackState extends State<FeedBackVc> {
     Com_Service().POSTIMAGE(formData, "/site/upload-image", (response){
 
       print(response);
-      imageStrs.add(response["data"]["url"]);
+      imageStrs.add(response["url"]);
       print("已添加");
       print(images.length);
       print(imageStrs.length);
@@ -314,15 +314,15 @@ class _FeedBackState extends State<FeedBackVc> {
     map.putIfAbsent("content", () => word);
     map.putIfAbsent("img", () => img);
 
-//    Com_Service().POST(map, "/leave-message/leave-message", (response){
-//
-//      print("留言成功");
-//      print(response);
-//      showToast("留言成功！！！");
-//      Navigator.pop(context);
-//    }, (fail){
-//
-//    });
+    Com_Service().post(map, "/site/leave-message", (response){
+
+      print("留言成功");
+      print(response);
+      showToast("留言成功！！！");
+      Navigator.pop(context);
+    }, (fail){
+
+    });
 
   }
 

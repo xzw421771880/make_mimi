@@ -3,6 +3,7 @@ import 'package:make_mimi/config/router_utils.dart';
 import 'package:make_mimi/home/Complain/CommitComplain.dart';
 import 'package:make_mimi/home/Complain/ComplainDetail.dart';
 import 'package:make_mimi/utils/XjSelete.dart';
+import 'package:make_mimi/utils/com_service.dart';
 
 
 class ComplainCenter extends StatefulWidget {
@@ -19,29 +20,26 @@ class _ComplainCenterState extends State<ComplainCenter> {
   @override
   void initState() {
     super.initState();
-    getDetail();
+    getData();
   }
 
-  getDetail() {
-//    print("getuser --------------");
-//    Map<String, dynamic> map = Map();
-//    map.putIfAbsent("prodId", () => widget.productId);
-//    Com_Service().get(map, "/prod/prodInfo", (response) {
-//      print("商品详情");
-//      print(response);
-//
-//      detailData = response;
-//      Map model = detailData['skuList'][0];
-//      sku = model['skuName'].toString().replaceAll(" ", ',');
-//      price = model['price'].toString();
-//      imageStr = model['pic'];
-//      setState(() {
-//        print("更新");
-//      });
-////      print(meModel.balanceUsdt);
-//    }, (fail) {
-//
-//    });
+  getData() {
+    print("getuser --------------");
+    Map<String, dynamic> map = Map();
+    map.putIfAbsent("type", () => 1);
+    map.putIfAbsent("page", () => 1);
+    map.putIfAbsent("pageSize", () => 20);
+    Com_Service().get(map, "/appeal/appeal-list", (response) {
+      print("商品详情");
+      print(response);
+
+      setState(() {
+        print("更新");
+      });
+//      print(meModel.balanceUsdt);
+    }, (fail) {
+
+    });
   }
 
   //下拉
