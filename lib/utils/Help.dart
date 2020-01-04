@@ -23,5 +23,12 @@ class Helps{
     return token;
   }
 
+  String strToDate(int dataStr){
+    var date2 = DateTime.fromMillisecondsSinceEpoch(dataStr*1000);
+    List<String> list  = date2.toString() .split('.');
+//    print('------------------------时间戳转日期：${list[0]}');
+    return list[0];
+  }
+
 
 }

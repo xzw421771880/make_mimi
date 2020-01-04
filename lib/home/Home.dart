@@ -1,6 +1,7 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:flutter_jpush/flutter_jpush.dart';
 import 'package:make_mimi/config/router_utils.dart';
 import 'package:make_mimi/home/Complain/ComplainCenter.dart';
 import 'package:make_mimi/home/HelpCenter.dart';
@@ -26,8 +27,37 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
+    _initJPush();
     getInfo();
   }
+  void _initJPush() async {
+    await FlutterJPush.startup();
+    print("初始化jpush成功");
+
+    // 获取 registrationID
+    var registrationID =await FlutterJPush.getRegistrationID();
+    print('registrationID-----${registrationID}');
+
+    // 注册接收和打开 Notification()
+    _initNotification();
+  }
+
+  void _initNotification() async {
+    FlutterJPush.addReceiveNotificationListener(
+            (JPushNotification notification) {
+
+          print("收到推送提醒: $notification");
+          print(notification);
+        }
+    );
+
+    FlutterJPush.addReceiveOpenNotificationListener(
+            (JPushNotification notification) {
+          print("打开了推送提醒: $notification");
+        }
+    );
+  }
+
 
   getInfo() {
     print("getuser --------------");
@@ -44,6 +74,9 @@ class _HomeState extends State<Home> {
 
     });
   }
+
+
+
 
   //下拉
   Future _pullToRefresh() async {
@@ -461,6 +494,7 @@ class _HomeState extends State<Home> {
               padding: EdgeInsets.all(0),
               onPressed: (){
 
+//                getsquare();
                 Route_all.push(context, ReciverOrder());
               },
               shape: RoundedRectangleBorder(

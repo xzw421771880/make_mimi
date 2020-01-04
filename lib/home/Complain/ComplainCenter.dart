@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:make_mimi/config/router_utils.dart';
 import 'package:make_mimi/home/Complain/CommitComplain.dart';
 import 'package:make_mimi/home/Complain/ComplainDetail.dart';
+import 'package:make_mimi/utils/Help.dart';
 import 'package:make_mimi/utils/XjSelete.dart';
 import 'package:make_mimi/utils/com_service.dart';
 
@@ -16,6 +17,7 @@ class ComplainCenter extends StatefulWidget {
 class _ComplainCenterState extends State<ComplainCenter> {
 
   int currentIndex = 0;
+  List dataList = List();
 
   @override
   void initState() {
@@ -32,6 +34,11 @@ class _ComplainCenterState extends State<ComplainCenter> {
     Com_Service().get(map, "/appeal/appeal-list", (response) {
       print("商品详情");
       print(response);
+      List list = response['list'];
+
+      dataList.addAll(list);
+      print(list);
+      print(dataList);
 
       setState(() {
         print("更新");
@@ -103,10 +110,10 @@ class _ComplainCenterState extends State<ComplainCenter> {
               bottom: 0,
               child: RefreshIndicator(
                 child: ListView.builder(
-                  itemCount: 3,
+                  itemCount: dataList.length,
                   itemBuilder: (BuildContext context,int index){
 
-                    return buildCell();
+                    return buildCell(index);
 //                    if (index == datalist.length){
 //                      return _buildProgressMoreIndicator();
 //                    }else{
@@ -124,7 +131,13 @@ class _ComplainCenterState extends State<ComplainCenter> {
     );
   }
 
-  Widget buildCell(){
+  Widget buildCell(int index){
+
+    print(1111);
+    print(dataList);
+    Map item = dataList[index];
+    print(item);
+    String dataStr  = Helps(). strToDate(int.parse(item["updated_at"]));
 
     return GestureDetector(
       onTap: (){
@@ -154,7 +167,7 @@ class _ComplainCenterState extends State<ComplainCenter> {
                         bottom: 0,
                         child: Container(
                           alignment: Alignment.centerLeft,
-                          child: Text('任务ID：123456'),
+                          child: Text('任务ID：${item['task_num']}'),
                         ),
                       ),
                       Positioned(
@@ -164,7 +177,7 @@ class _ComplainCenterState extends State<ComplainCenter> {
                         bottom: 0,
                         child: Container(
                           alignment: Alignment.centerRight,
-                          child: Text('客服通过申述'),
+                          child: Text(item['type']),
                         ),
                       )
                     ],
@@ -176,7 +189,7 @@ class _ComplainCenterState extends State<ComplainCenter> {
                 child: Container(
                   height: 30,
                   alignment: Alignment.centerLeft,
-                  child: Text('申述店铺：××旗舰店'),
+                  child: Text('申述店铺：${item['appeal_type']}'),
                 ),
               ),
               Padding(
@@ -192,7 +205,7 @@ class _ComplainCenterState extends State<ComplainCenter> {
                         bottom: 0,
                         child: Container(
                           alignment: Alignment.centerLeft,
-                          child: Text('申述类型：违规操作'),
+                          child: Text('申述类型：${item['appeal_type']}'),
                         ),
                       ),
                       Positioned(
@@ -202,7 +215,7 @@ class _ComplainCenterState extends State<ComplainCenter> {
                         bottom: 0,
                         child: Container(
                           alignment: Alignment.centerRight,
-                          child: Text('2019-10-10 10:10'),
+                          child: Text(dataStr),
                         ),
                       )
                     ],

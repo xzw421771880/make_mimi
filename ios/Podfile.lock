@@ -2,25 +2,39 @@ PODS:
   - city_pickers (0.0.1):
     - Flutter
   - Flutter (1.0.0)
+  - flutter_jpush (0.0.1):
+    - Flutter
+    - JPush
   - fluttertoast (0.0.2):
     - Flutter
   - image_picker (0.0.1):
     - Flutter
+  - JCore (2.1.2)
+  - JPush (3.2.4):
+    - JCore (< 3.0.0, >= 2.0.0)
   - shared_preferences (0.0.1):
     - Flutter
 
 DEPENDENCIES:
   - city_pickers (from `.symlinks/plugins/city_pickers/ios`)
   - Flutter (from `.symlinks/flutter/ios`)
+  - flutter_jpush (from `.symlinks/plugins/flutter_jpush/ios`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - image_picker (from `.symlinks/plugins/image_picker/ios`)
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - JCore
+    - JPush
 
 EXTERNAL SOURCES:
   city_pickers:
     :path: ".symlinks/plugins/city_pickers/ios"
   Flutter:
     :path: ".symlinks/flutter/ios"
+  flutter_jpush:
+    :path: ".symlinks/plugins/flutter_jpush/ios"
   fluttertoast:
     :path: ".symlinks/plugins/fluttertoast/ios"
   image_picker:
@@ -31,8 +45,11 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   city_pickers: b0370f4c35c201723b5b7fcce10ec29b59d5bc35
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+  flutter_jpush: bb278c661136b2a2032e96ffc15bbce871d3fb02
   fluttertoast: b644586ef3b16f67fae9a1f8754cef6b2d6b634b
   image_picker: e3eacd46b94694dde7cf2705955cece853aa1a8f
+  JCore: 1a426120b510cdebfd67b82bfb9483238ee09413
+  JPush: 29466e5f30dbd703f640d70540e411e829cac1fa
   shared_preferences: 430726339841afefe5142b9c1f50cb6bd7793e01
 
 PODFILE CHECKSUM: b6a0a141693093b304368d08511b46cf3d1d0ac5
