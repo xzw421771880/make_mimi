@@ -144,6 +144,7 @@ class _LoginState extends State<Login> {
             top: 0,
             bottom: 0,
             child: TextField(
+              obscureText: index == 1?true:false,
 //              style: TextStyle(textBaseline: TextBaseline.alphabetic),
               cursorColor: Colors.grey,
               keyboardType: inputList[index],

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:make_mimi/Task/TaskDetail.dart';
+import 'package:make_mimi/config/router_utils.dart';
 import 'package:make_mimi/utils/XjSelete.dart';
 import 'package:make_mimi/utils/com_service.dart';
 
@@ -126,43 +128,51 @@ class _TaskState extends State<Task> {
 
   Widget buildCell(int index){
     Map item = dataList[index];
-    return Container(
-      height: 100,
-      color: Colors.white,
-      child: Stack(
-        children: <Widget>[
-          Positioned(
-            left: 15,
-            top: 10,
-            width: 80,
-            height: 80,
-            child: Image.network('http://sd.zy.hzchongqv.cn/uploads/images/202001/5e0d9cc70e25b.jpg',fit: BoxFit.cover,),
-          ),
-          Positioned(
-            left: 105,
-            top: 15,
-            
-            child: Text(item['shop_name']),
-          ),
-          Positioned(
-            right: 15,
-            top: 15,
+    return GestureDetector(
+      onTap: (){
+        Route_all.push(context, TaskDetail('1', (index){
 
-            child: Text(item['type_name'],textAlign: TextAlign.right,),
-          ),
-          Positioned(
-            left: 105,
-            top: 40,
+          print('1111');
+        }));
+      },
+      child: Container(
+        height: 100,
+        color: Colors.white,
+        child: Stack(
+          children: <Widget>[
+            Positioned(
+              left: 15,
+              top: 10,
+              width: 80,
+              height: 80,
+              child: Image.network('http://sd.zy.hzchongqv.cn/uploads/images/202001/5e0d9cc70e25b.jpg',fit: BoxFit.cover,),
+            ),
+            Positioned(
+              left: 105,
+              top: 15,
 
-            child: Text('本金：${item['goods_deal_price']}元'),
-          ),
-          Positioned(
-            left: 105,
-            top: 65,
+              child: Text(item['shop_name']),
+            ),
+            Positioned(
+              right: 15,
+              top: 15,
 
-            child: Text('佣金：${item['task_amount']}元'),
-          )
-        ],
+              child: Text(item['type_name'],textAlign: TextAlign.right,),
+            ),
+            Positioned(
+              left: 105,
+              top: 40,
+
+              child: Text('本金：${item['goods_deal_price']}元'),
+            ),
+            Positioned(
+              left: 105,
+              top: 65,
+
+              child: Text('佣金：${item['task_amount']}元'),
+            )
+          ],
+        ),
       ),
     );
   }

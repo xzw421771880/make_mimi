@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:make_mimi/config/router_utils.dart';
 import 'package:make_mimi/login/Certification.dart';
 import 'package:make_mimi/utils/Help.dart';
+import 'package:make_mimi/utils/RefundReason.dart';
 import 'package:make_mimi/utils/com_service.dart';
 import 'package:make_mimi/utils/showtoast_util.dart';
 
@@ -30,6 +31,7 @@ class _RegisterState extends State<Register> {
   String icq;
   String inviteCode;
   String msgCode;
+  String age = '15-20';
 
 
   void _initTimer() {
@@ -179,6 +181,7 @@ class _RegisterState extends State<Register> {
             top: 0,
             bottom: 0,
             child: TextField(
+              obscureText: index == 2||index == 3?true:false,
 //              style: TextStyle(textBaseline: TextBaseline.alphabetic),
               cursorColor: Colors.grey,
               keyboardType: inputList[index],
@@ -333,6 +336,18 @@ class _RegisterState extends State<Register> {
     return GestureDetector(
       onTap: (){
         print('选择年龄');
+        showDialog(
+            context: context,
+            builder: (BuildContext context){
+              return RefundReason(['16-20','21-25','26-30','31-35','36-40'],(resonBack){
+
+                age = resonBack;
+                setState(() {
+
+                });
+              });
+            }
+        );
       },
       child: Container(
 
@@ -342,12 +357,12 @@ class _RegisterState extends State<Register> {
           children: <Widget>[
             Positioned(
               left: 15,
-              width: 80,
+              width: 200,
               top: 0,
               bottom: 0,
               child: Container(
                 alignment: Alignment.centerLeft,
-                child: Text('18-26'),
+                child: Text('年龄段：${age}'),
               ),
             ),
             Positioned(
@@ -457,7 +472,7 @@ class _RegisterState extends State<Register> {
 
     map.putIfAbsent("icq", () => icq);
     map.putIfAbsent("sex", () => sex);
-    map.putIfAbsent("agebracket", () => '16');
+    map.putIfAbsent("agebracket", () => age);
 
 
     print(map);

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:make_mimi/utils/Help.dart';
+import 'package:make_mimi/utils/com_service.dart';
 
 
 class TopupRecord extends StatefulWidget {
@@ -11,32 +13,42 @@ class TopupRecord extends StatefulWidget {
 class _TopupRecordState extends State<TopupRecord> {
 
 
+
+  Map mydata = Map();
+  List dataList = List();
+
+
+  int totalSize = 0; //总条数
+  String loadMoreText = "";
+  TextStyle loadMoreTextStyle =
+  new TextStyle(color: const Color(0xFF999999), fontSize: 14.0);
+  int currentPage = 1;
+
   @override
   void initState() {
     super.initState();
-    getDetail();
+    getData();
   }
 
-  getDetail() {
-//    print("getuser --------------");
-//    Map<String, dynamic> map = Map();
-//    map.putIfAbsent("prodId", () => widget.productId);
-//    Com_Service().get(map, "/prod/prodInfo", (response) {
-//      print("商品详情");
-//      print(response);
-//
-//      detailData = response;
-//      Map model = detailData['skuList'][0];
-//      sku = model['skuName'].toString().replaceAll(" ", ',');
-//      price = model['price'].toString();
-//      imageStr = model['pic'];
-//      setState(() {
-//        print("更新");
-//      });
-////      print(meModel.balanceUsdt);
-//    }, (fail) {
-//
-//    });
+  getData() {
+    print("getuser --------------");
+    Map<String, dynamic> map = Map();
+    map.putIfAbsent("page", () => 1);
+    map.putIfAbsent("pageSize", () => 20);
+    map.putIfAbsent("type", () => 3);
+    Com_Service().get(map, "/user/deposit", (response) {
+      print("提现记录");
+      print(response);
+
+      mydata = response;
+      dataList.addAll(response['list']);
+      setState(() {
+        print("更新");
+      });
+//      print(meModel.balanceUsdt);
+    }, (fail) {
+
+    });
   }
 
 
@@ -58,14 +70,20 @@ class _TopupRecordState extends State<TopupRecord> {
         elevation: 0,
       ),
       body: ListView.builder(
-          itemCount: 3,
+          itemCount: dataList.length,
           itemBuilder: (BuildContext context,int index){
-            return buildCell();
+            return buildCell(index);
           }),
     );
   }
 
-  Widget buildCell(){
+  Widget buildCell(int index){
+
+    Map item = dataList[index];
+
+    List statusList = ['处理中','通过','不通过','打款中','已打款'];
+
+
 
     return GestureDetector(
       onTap: (){
@@ -95,7 +113,7 @@ class _TopupRecordState extends State<TopupRecord> {
                         bottom: 0,
                         child: Container(
                           alignment: Alignment.centerLeft,
-                          child: Text('保障金充值'),
+                          child: Text('佣金提现'),
                         ),
                       ),
                       Positioned(
@@ -105,7 +123,7 @@ class _TopupRecordState extends State<TopupRecord> {
                         bottom: 0,
                         child: Container(
                           alignment: Alignment.centerRight,
-                          child: Text('充值成功'),
+                          child: Text(statusList[int.parse(item['status']) ]),
                         ),
                       )
                     ],
@@ -117,7 +135,7 @@ class _TopupRecordState extends State<TopupRecord> {
                 child: Container(
                   height: 30,
                   alignment: Alignment.centerLeft,
-                  child: Text('转出银行卡姓名：张三'),
+                  child: Text('开户人：${item['real_name']}'),
                 ),
               ),
               Padding(
@@ -125,7 +143,7 @@ class _TopupRecordState extends State<TopupRecord> {
                 child: Container(
                   height: 30,
                   alignment: Alignment.centerLeft,
-                  child: Text('转出银行名称：工商银行'),
+                  child: Text('提现银行：${item['bank']}'),
                 ),
               ),
               Padding(
@@ -133,7 +151,7 @@ class _TopupRecordState extends State<TopupRecord> {
                 child: Container(
                   height: 30,
                   alignment: Alignment.centerLeft,
-                  child: Text('转出银行卡号：123456789'),
+                  child: Text('银行账号：${item['card_num']}'),
                 ),
               ),
               Padding(
@@ -149,7 +167,7 @@ class _TopupRecordState extends State<TopupRecord> {
                         bottom: 0,
                         child: Container(
                           alignment: Alignment.centerLeft,
-                          child: Text('转出金额：888'),
+                          child: Text('提现金额：${item['amount']}'),
                         ),
                       ),
                       Positioned(
@@ -159,7 +177,7 @@ class _TopupRecordState extends State<TopupRecord> {
                         bottom: 0,
                         child: Container(
                           alignment: Alignment.centerRight,
-                          child: Text('2019-10-10 10:10'),
+                          child: Text(Helps().strToDate(int.parse(item['created_at']) )),
                         ),
                       )
                     ],

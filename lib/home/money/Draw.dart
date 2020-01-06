@@ -1,8 +1,12 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:make_mimi/config/router_utils.dart';
 import 'package:make_mimi/home/money/DrawRecord.dart';
 import 'package:make_mimi/home/money/TopupRecord.dart';
 import 'package:make_mimi/utils/RefundReason.dart';
+import 'package:make_mimi/utils/com_service.dart';
+import 'package:make_mimi/utils/showtoast_util.dart';
 
 
 class Draw extends StatefulWidget {
@@ -15,6 +19,10 @@ class Draw extends StatefulWidget {
 class _DrawState extends State<Draw> {
 
   String bank;
+  String realName;
+  String bankNum;
+  String rebankNum;
+  String amount;
 
   @override
   void initState() {
@@ -115,7 +123,7 @@ class _DrawState extends State<Draw> {
                 onPressed: () {
 
                   print('确认提交');
-//                  Route_all.push(context, Login());
+                  commit();
                 },
               )
           )
@@ -182,8 +190,9 @@ class _DrawState extends State<Draw> {
 
   Widget buildText(int index){
 
-    List titleList = ['提现银行','开户人姓名','银行账户','再次输入银行账号','提款金额（元）'];
+    List titleList = ['开户人姓名','银行账户','确认银行账号','提款金额（元）'];
     List hintList = ['请输入开户人姓名','请输入银行账号','确认银行账号','请输入提现金额'];
+    List<TextInputType> input = [TextInputType.text,TextInputType.phone,TextInputType.phone,TextInputType.number];
 
 
     return Container(
@@ -209,7 +218,7 @@ class _DrawState extends State<Draw> {
             child: TextField(
 //              style: TextStyle(textBaseline: TextBaseline.alphabetic),
               cursorColor: Colors.grey,
-              keyboardType: TextInputType.visiblePassword,
+              keyboardType: input[index],
               decoration:  new InputDecoration(
                 hintText: hintList[index],
                 contentPadding: EdgeInsets.only(top: 14,bottom: 0),
@@ -219,6 +228,17 @@ class _DrawState extends State<Draw> {
                 ),
               ),
               onChanged: (value){
+
+                if (index == 0) {
+
+                  realName = value;
+                }else if(index == 1){
+                  bankNum = value;
+                }else if(index == 2){
+                  rebankNum = value;
+                }else{
+                  amount = value;
+                }
 
               },
             ),
@@ -247,7 +267,7 @@ class _DrawState extends State<Draw> {
         showDialog(
             context: context,
             builder: (BuildContext context){
-              return RefundReason(['快递一直未送达','商品破损/少件','商品与描述不符'],(resonBack){
+              return RefundReason(['工商银行','建设银行','中国银行','农业银行'],(resonBack){
 
                 bank = resonBack;
                 setState(() {
@@ -321,6 +341,68 @@ class _DrawState extends State<Draw> {
         ],
       ),
     );
+  }
+
+  commit(){
+
+
+
+    if (bank == null){
+      showToast('请选择银行');
+      return;
+    }
+
+    if (realName == null){
+      showToast('请输入真实姓名');
+      return;
+    }
+
+    if (bankNum == null){
+
+      showToast('请输入银行账号');
+      return;
+    }
+
+    if (rebankNum == null){
+
+      showToast('请确认银行账号');
+      return;
+    }
+
+    if (bankNum != rebankNum){
+
+      showToast('两次银行账号输入不一致');
+      return;
+    }
+
+    if (amount == null){
+
+      showToast('请输入提现金额');
+      return;
+    }
+
+
+
+    Map<String, dynamic> map = Map();
+
+    print('3333');
+    map.putIfAbsent("bank", () => bank);
+    map.putIfAbsent("realName", () => realName);
+    map.putIfAbsent("bankNum", () => bankNum);
+    map.putIfAbsent("amount", () => amount);
+
+    print(map);
+
+    Com_Service().post(map, "/user/withdraw", (response) {
+
+      print("提现成功");
+      print(response);
+      showToast('提交成功');
+      Navigator.pop(context);
+    }, (fail) {
+      print("失败");
+
+    });
   }
 
 

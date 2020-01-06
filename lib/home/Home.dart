@@ -62,7 +62,7 @@ class _HomeState extends State<Home> {
   getInfo() {
     print("getuser --------------");
     Com_Service().post(Map(), "/user/info", (response) {
-      print("商品详情");
+      print("个人信息详情");
       print(response);
 
       user = response;
@@ -101,7 +101,7 @@ class _HomeState extends State<Home> {
             buildNumber(),
             buildTask(),
             buildTaskStatus(),
-            buildCommit()
+//            buildCommit()
           ],
         ), onRefresh:_pullToRefresh),
       )
@@ -178,7 +178,12 @@ class _HomeState extends State<Home> {
             child: GestureDetector(
               onTap: (){
                 print('个人信息');
-                Route_all.push(context, Information());
+                if(user == null){
+                  print('请登录');
+                }else{
+                  Route_all.push(context, Information(user));
+                }
+
               },
               child: Container(
                 color: Colors.white,
@@ -284,7 +289,7 @@ class _HomeState extends State<Home> {
   Widget buildNumber(){
 
     List<String> titleList  = ['佣金（元）','本金（元）','保证金（元）'];
-    List<String> numberList  = ['888.88','888.88','888.88'];
+    List<String> numberList  = [user == null?'0.00':user['totalRevenue'].toString(),user == null?'0.00':user['balance'],user == null?'0.00':user['deposit']];
     List<Positioned> pList = new List();
 
     for (int i = 0; i< titleList.length;i++){

@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 
 class Information extends StatefulWidget {
 
+  Map  user;
+
+  Information(this.user);
 
   @override
   _InformationState createState() => _InformationState();
@@ -105,8 +108,28 @@ class _InformationState extends State<Information> {
 
 
   Widget buildCell(int index){
-    List titleList = ['姓名','身份证号','手机号','QQ号码','性别','年临段','淘宝号会员名','淘宝号心级','淘宝号性别','收货人','收货地址'];
-    List detailList = ['姓名','身份证号','手机号','QQ号码','性别','年临段','淘宝号会员名','淘宝号心级','淘宝号性别','收货人','收货地址'];
+    String name;
+    String idCard;
+    if(widget. user['realName'] != null){
+      name = widget.user['realName'];
+    }else{
+      name = widget.user['mobile'].toString();
+    }
+
+    if(widget.user['idCardNum'] == null){
+
+      idCard = '***';
+    }else{
+      idCard = widget.user['idCardNum'];
+    }
+
+    String phone = widget. user['mobile'].toString().substring(0,3)+"****"+widget. user['mobile'].toString().substring(7,11);
+
+    Map tb =  widget.user['taobao'];
+
+    List titleList = ['姓名','身份证号','手机号','QQ号码','性别','年龄段','淘宝号会员名','淘宝号心级','淘宝号性别','收货人','收货地址'];
+    List detailList = [name,idCard,phone,widget.user['qq'],tb == null?'**': tb['taobao_sex'],widget.user['ageBracket'],tb == null?'**': tb['taobao_name'],tb == null?'**': tb['taobao_level'],tb == null?'**': tb['taobao_sex'],tb == null?'**': tb['taobao_name'],tb == null?'**': tb['province']+tb['city']+tb['district']+tb['detailed_address']];
+//    List detailList = [name,idCard,phone,widget.user['qq'],tb['taobao_sex'],phone,widget.user['ageBracket'],'d','d','打撒','订单','多订单','dddsss'];
 
     return Container(
       color: Colors.white,
