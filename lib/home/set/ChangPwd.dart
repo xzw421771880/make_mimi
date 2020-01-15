@@ -107,6 +107,7 @@ class _ChangPwdState extends State<ChangPwd> {
             top: 0,
             bottom: 0,
             child: TextField(
+              obscureText: true,
 //              style: TextStyle(textBaseline: TextBaseline.alphabetic),
               cursorColor: Colors.grey,
               keyboardType: TextInputType.visiblePassword,
@@ -139,12 +140,12 @@ class _ChangPwdState extends State<ChangPwd> {
   commit(){
 
 
-    if(oldPass == null){
+    if(oldPass == null ||oldPass.length == 0){
       showToast('请输入原密码');
       return;
     }
 
-    if(newPass == null){
+    if(newPass == null||newPass.length == 0){
       showToast('请输入新密码');
       return;
     }

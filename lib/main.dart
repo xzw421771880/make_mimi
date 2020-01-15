@@ -1,8 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:make_mimi/Mimi.dart';
 import 'package:make_mimi/home/Home.dart';
 
-void main() => runApp(MyApp());
+void main(){
+
+  ///
+  /// 强制竖屏
+  ///
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((_) {
+    runApp(MyApp());
+  });
+}
 
 class MyApp extends StatelessWidget {
 

@@ -5,6 +5,10 @@ import 'package:make_mimi/utils/com_service.dart';
 
 class DrawRecord extends StatefulWidget {
 
+  String type;
+
+  DrawRecord(this.type);
+
 
   @override
   _DrawRecordState createState() => _DrawRecordState();
@@ -31,11 +35,13 @@ class _DrawRecordState extends State<DrawRecord> {
   }
 
   getData() {
+
+    //1充值, 2提现, 3充值保证金, 4提出保证金 5商品垫付金额 6任务费用 7用户返本金 8用户返佣 9返佣提成10佣金提现
     print("getuser --------------");
     Map<String, dynamic> map = Map();
     map.putIfAbsent("page", () => 1);
     map.putIfAbsent("pageSize", () => 20);
-    map.putIfAbsent("type", () => 1);
+    map.putIfAbsent("type", () => widget.type);
     Com_Service().get(map, "/user/deposit", (response) {
       print("提现记录");
       print(response);

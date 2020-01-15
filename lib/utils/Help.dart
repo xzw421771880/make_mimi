@@ -1,5 +1,8 @@
 
 
+import 'package:flutter/material.dart';
+import 'package:make_mimi/config/router_utils.dart';
+import 'package:make_mimi/login/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Helps{
@@ -28,6 +31,29 @@ class Helps{
     List<String> list  = date2.toString() .split('.');
 //    print('------------------------时间戳转日期：${list[0]}');
     return list[0];
+  }
+
+  out(BuildContext context,bool isback ) async{
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    await sharedPreferences.setString('token', "");
+    isback?Route_all.push(context, Login(isback)): Route_all.pushAndRemove(context, Login(isback));
+
+  }
+
+  Widget footView(String loadMoreText,TextStyle loadMoreTextStyle) {
+    return new Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: new Center(
+        child: new Text(loadMoreText, style: loadMoreTextStyle),
+      ),
+    );
+  }
+
+  //获取当前时间戳
+  int currentTimeMillis() {
+    int time = new DateTime.now().millisecondsSinceEpoch;
+    return (time/1000).toInt();
+//      int.parse((time/1000).toString());
   }
 
 

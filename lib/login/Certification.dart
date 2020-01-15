@@ -1,6 +1,12 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:make_mimi/config/router_utils.dart';
 import 'package:make_mimi/login/CertificationCase.dart';
+import 'package:make_mimi/utils/com_service.dart';
+import 'package:make_mimi/utils/showtoast_util.dart';
 
 
 class Certification extends StatefulWidget {
@@ -11,6 +17,13 @@ class Certification extends StatefulWidget {
 }
 
 class _CertificationState extends State<Certification> {
+
+  String name;
+  String idCard;
+
+  String zmStr;
+  String fmStr;
+  String scStr;
 
 
   @override
@@ -89,11 +102,12 @@ class _CertificationState extends State<Certification> {
               child: MaterialButton(
                 color: Colors.blue,
                 textColor: Colors.white,
-                child: new Text('注册', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,),
+                child: new Text('提交认证', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,),
 
                 ),
                 onPressed: () {
 
+                  commit();
                 },
               )
           )
@@ -142,6 +156,11 @@ class _CertificationState extends State<Certification> {
                 ),
               ),
               onChanged: (value){
+                if (index == 0){
+                  name = value;
+                }else{
+                  idCard = value;
+                }
 
               },
             ),
@@ -203,7 +222,7 @@ class _CertificationState extends State<Certification> {
             padding: EdgeInsets.only(left: 20,right: 15,top: 10,bottom: 5),
             child: Container(
               alignment: Alignment.centerLeft,
-              child: Text('署名加备注：“仅用户实名认证，不可用于其他任何ddd用途'),
+              child: Text('署名加备注：“仅用户实名认证，不可用于其他任何用途'),
             ),
 
           )
@@ -213,6 +232,15 @@ class _CertificationState extends State<Certification> {
   }
 
   Widget buildImage(int index){
+    List titleList = ['身份证正面图片','身份证反面图片','手持身份证图片'];
+    Image image;
+    if(index == 0){
+      image = zmStr == null? Image(image: AssetImage('images/login/register_certi_add.png')):Image.network(zmStr,fit: BoxFit.cover,);
+    }else if(index == 1){
+      image = fmStr == null? Image(image: AssetImage('images/login/register_certi_add.png')):Image.network(fmStr,fit: BoxFit.cover,);
+    }else{
+      image = scStr == null? Image(image: AssetImage('images/login/register_certi_add.png')):Image.network(scStr,fit: BoxFit.cover,);
+    }
 
     return Container(
       height: 250,
@@ -226,6 +254,7 @@ class _CertificationState extends State<Certification> {
             child: GestureDetector(
               onTap: (){
                 print(index);
+                alert(index);
               },
               child: Container(
                 color: Colors.white,
@@ -236,13 +265,13 @@ class _CertificationState extends State<Certification> {
                       top: 50,
                       width: 80,
                       height: 80,
-                      child: Image(image: AssetImage('images/login/register_certi_add.png')),
+                      child: image,
                     ),
                     Positioned(
                       left: 0,
                       bottom: 30,
                       right: 0,
-                      child: Text('上传手持手写照（要求文字）',textAlign: TextAlign.center,style: TextStyle(fontSize: 17,color:Colors.grey),),
+                      child: Text(titleList[index],textAlign: TextAlign.center,style: TextStyle(fontSize: 17,color:Colors.grey),),
                     )
                   ],
                 ),
@@ -252,6 +281,152 @@ class _CertificationState extends State<Certification> {
         ],
       ),
     );
+  }
+
+  alert(int index){
+    print("666");
+
+    showDialog<Null>(
+      context: context,
+      builder: (BuildContext context) {
+        return new SimpleDialog(
+          title: new Text('选择图片',textAlign: TextAlign.center,style: TextStyle(
+
+              fontSize: 19
+          ),),
+          children: <Widget>[
+            new SimpleDialogOption(
+              child: new Text('相机',textAlign: TextAlign.center,style: TextStyle(
+
+                fontSize: 17,
+              ),),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _getImageFromCamera(index);
+              },
+            ),
+            new SimpleDialogOption(
+              child: new Text('相册',textAlign: TextAlign.center,style: TextStyle(
+
+                  fontSize: 17
+              ),),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _getImageFromGallery(index);
+              },
+            ),
+          ],
+        );
+      },
+    ).then((val) {
+      print(val);
+    });
+  }
+
+  //拍照
+  Future _getImageFromCamera(int index) async {
+    var image =
+    await ImagePicker.pickImage(source: ImageSource.camera, maxWidth: 400);
+
+    setState(() {
+      _uploadImage(image, index);
+    });
+  }
+
+  //相册选择
+  Future _getImageFromGallery(int index) async {
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      _uploadImage(image, index);
+    });
+  }
+
+  //上传图片到服务器
+  _uploadImage(File file,int index) async {
+
+    String path = file.path;
+    var name1 = path.substring(path.lastIndexOf("/") + 1, path.length);
+    FormData formData = FormData.fromMap({
+      //"": "", //这里写其他需要传递的参数
+//      "file": zmImage,_
+      "file": await MultipartFile.fromFile(path,filename: name1),
+    });
+
+    Com_Service().POSTIMAGE(formData, "/site/upload-image", (response){
+
+      print(response);
+      if(index == 0){
+        zmStr = response['url'];
+      }else if(index == 1){
+        fmStr = response['url'];
+      }else{
+        scStr = response['url'];
+      }
+      setState(() {
+
+      });
+
+    }, (fail){
+
+    });
+  }
+
+  commit(){
+    if(name == null){
+      showToast('请输入真实姓名');
+      return;
+    }
+
+    if(idCard== null){
+      showToast('请输入身份证号码');
+      return;
+    }
+
+    if(zmStr == null){
+      showToast('请选择身份证正面图片');
+      return;
+    }
+
+    if(fmStr == null){
+      showToast('请选择身份证反面图片');
+      return;
+    }
+
+    if(scStr == null){
+      showToast('请选择手持身份证图片');
+      return;
+    }
+
+
+
+
+    Map<String, dynamic> map = Map();
+
+    print('3333');
+    map.putIfAbsent("realname", () => name);
+    map.putIfAbsent("id_card_num", () => idCard);
+    map.putIfAbsent("id_card_head", () => zmStr);
+    map.putIfAbsent("id_card_tail", () => fmStr);
+
+    map.putIfAbsent("declaration", () => scStr);
+
+
+    print(map);
+
+
+    Com_Service().post(map, "/user/identity", (response) {
+
+      print("提交成功");
+      print(response);
+      showToast('成功提交认证，请等待审核');
+      Navigator.pop(context);
+      Navigator.pop(context);
+    }, (fail) {
+
+      print("失败");
+
+    });
   }
 
 

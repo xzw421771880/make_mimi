@@ -60,25 +60,42 @@ class _TbCaseState extends State<TbCase> {
       body: ListView(
         children: <Widget>[
 
-          buildTitle(),
+          buildTitle(0),
+          Container(height: 30,),
+          buildTitle(1),
+          Container(height: 30,),
+          buildTitle(2),
+          Container(height: 30,),
         ],
       ),
     );
   }
 
-  Widget buildTitle(){
+  Widget buildTitle(int index){
+    List titleList = ['1.淘宝会员名截图','2.支付宝实名认证截图','3.淘宝心级截图'];
+    List operateList = ['打开手机淘宝','打开支付宝','打开手机淘宝我的评价'];
+    List imageList = ['home_blindtb_case1','home_blindtb_case2','home_blindtb_case3'];
 
     return Container(
 
       child: Column(
         children: <Widget>[
+//          Padding(
+//            padding: EdgeInsets.all(0),
+//
+//            child: Container(
+//              height: 50,
+//              alignment: Alignment.center,
+//              child: Text('绑定淘宝买号示例',style: TextStyle(color: Color(0xffFF0000),fontSize: 19 ),),
+//            ),
+//          ),
           Padding(
-            padding: EdgeInsets.all(0),
+            padding: EdgeInsets.only(left: 15),
 
             child: Container(
-              height: 50,
-              alignment: Alignment.center,
-              child: Text('绑定淘宝买号示例',style: TextStyle(color: Color(0xffFF0000),fontSize: 19 ),),
+              height: 30,
+              alignment: Alignment.centerLeft,
+              child: Text(titleList[index],style: TextStyle(fontSize: 15 ),),
             ),
           ),
           Padding(
@@ -87,16 +104,7 @@ class _TbCaseState extends State<TbCase> {
             child: Container(
               height: 30,
               alignment: Alignment.centerLeft,
-              child: Text('1.淘宝会员名截图',style: TextStyle(fontSize: 15 ),),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: 15),
-
-            child: Container(
-              height: 30,
-              alignment: Alignment.centerLeft,
-              child: Text('打开手机淘宝APP',style: TextStyle(fontSize: 14 ),),
+              child: Text(operateList[index],style: TextStyle(fontSize: 14 ),),
             ),
           ),
           Padding(
@@ -104,7 +112,7 @@ class _TbCaseState extends State<TbCase> {
 
             child: Container(
               height: 300,
-              color: Colors.grey,
+              child: Image(image: AssetImage('images/home/${imageList[index]}.png')),
 
             ),
           )

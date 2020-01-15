@@ -8,19 +8,19 @@ import 'package:make_mimi/utils/loading.dart';
 import 'package:make_mimi/utils/showtoast_util.dart';
 
 typedef backBlock();
+class Complete extends StatefulWidget {
 
-class Evaluation extends StatefulWidget {
 
   String orderId;
   backBlock back;
-  Evaluation(this.orderId,this.back);
+  Complete(this.orderId,this.back);
 
 
   @override
-  _EvaluationState createState() => _EvaluationState();
+  _CompleteState createState() => _CompleteState();
 }
 
-class _EvaluationState extends State<Evaluation> {
+class _CompleteState extends State<Complete> {
 
 
   List<File> images = List<File>();
@@ -29,8 +29,7 @@ class _EvaluationState extends State<Evaluation> {
   Map orderInfo;
   Map orderMold = Map();
   List requires = List();
-  Map orderStatus = Map();
-
+  List requiresImage = List();
 
   @override
   void initState() {
@@ -47,7 +46,15 @@ class _EvaluationState extends State<Evaluation> {
       orderInfo = response;
       orderMold = response['range']['order_mold'];
       requires = response['requires'];
-      orderStatus = response['range']['orderStatus'];
+
+      for(int i = 0;i<requires.length;i++){
+        if (requires[i]['is_require_snapshot'] == '1'){
+          print(requires[i]);
+          requiresImage.add(requires[i]);
+          images.add(null);
+        }
+      }
+
       setState(() {
         print("更新");
       });
@@ -66,7 +73,7 @@ class _EvaluationState extends State<Evaluation> {
       appBar: AppBar(
 //        textTheme: TextTheme(subtitle: "充币"),
         backgroundColor: Colors.white,
-        title: Text('上传评价截图', style: TextStyle(fontSize: 15,
+        title: Text('确认完成订单', style: TextStyle(fontSize: 15,
           fontWeight: FontWeight.bold,
           color: Color(0xff333333),),),
         leading: new IconButton(icon: Icon(Icons.arrow_back_ios),
@@ -86,9 +93,10 @@ class _EvaluationState extends State<Evaluation> {
               child:ListView(
 
                 children: <Widget>[
+
                   buildTitle(0),
-                  orderInfo == null?Container():
-                  buildDetail(['${orderInfo['shop_name']}(${orderMold[orderInfo['task_mold']]})','任务编号：${orderInfo['id']}','本金：${orderInfo['goods_deal_price']}元','佣金：${orderInfo['task_commission']}元']),
+                  orderInfo == null?Container():buildDetail(['${orderInfo['shop_name']}(${orderMold[orderInfo['task_mold']]})','任务编号：${orderInfo['id']}','本金：${orderInfo['goods_deal_price']}元','佣金：${orderInfo['task_commission']}元']),
+
                   buildTitle(1),
 
                   Container(
@@ -176,94 +184,71 @@ class _EvaluationState extends State<Evaluation> {
 
   Widget buildImages(){
 
+    List <Padding> list = List();
+    for (int i = 0;i < requiresImage.length;i++){
+      print(requiresImage);
+      print(requiresImage[i]);
+      list.add(
+          Padding(
+            padding: EdgeInsets.all(0),
+            child: Container(
+              height: 160,
+              child: Stack(
+                children: <Widget>[
+                  Positioned(
+                    left: 15,
+                    top: 0,
+                    height: 40,
+                    width: 250,
+                    child: Container(
+                      alignment: Alignment.centerLeft,
+                      child: Text('${requiresImage[i]['task_require_name']}（截图）'),
+                    ),
+                  ),
+                  Positioned(
+                    left: 15,
+                    top: 40,
+                    height: 100,
+                    width: 100,
+                    child: GestureDetector(
+                      onTap: (){
+                        print('点击选择');
+                        alert(i);
+                      },
+                      child:images[i] == null? Container(
+                        color: Color(0xffaaaaaa),
+                        alignment: Alignment.center,
+                        child: Text('点击选择图片'),
+                      ):Image.file(images[i],fit: BoxFit.cover,),
+                    ),
+                  ),
+                  Positioned(
+                    left: 15,
+                    right: 15,
+                    height: 1,
+                    bottom: 1,
+                    child: Container(
+                      color: Color(0xffcccccc),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+      );
+    }
+
     return Container(
       color: Colors.white,
-      height: 120,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: images.length +1,
-        itemBuilder: (BuildContext context, int index) {
-
-          if(index == 0){
-
-            return buildAdd(context, index);
-          }else{
-            return buildImage(context, index -1);
-          }
-
-        },
+      child: Column(
+        children: list,
       ),
     );
   }
 
-  Widget buildImage(BuildContext context, int index){
-    return Container(
-      width: 120,
 
-
-//      color: Colors.red,
-      child: Stack(
-        children: <Widget>[
-          Positioned(
-
-            top: 5,
-            left: 0,
-            right: 15,
-            bottom: 0,
-            child: Image.file(images[index],fit: BoxFit.cover,),
-          ),
-          Positioned(
-
-              top: 0,
-              right: 10,
-              height: 20,
-              width: 20,
-              child: GestureDetector(
-                onTap: (){
-                  images.removeAt(index);
-                  setState(() {
-
-                  });
-                },
-                child: Image(image: AssetImage("images/home/leave_cha4_normal.png"),),
-              )
-
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget buildAdd(BuildContext context, int index){
-
-    return GestureDetector(
-      onTap: alert,
-      child: Container(
-          width: 135,
-          child: Stack(
-              children: <Widget>[
-                Positioned(
-
-                  top: 5,
-                  left: 10,
-                  right: 15,
-                  bottom: 0,
-                  child: Image(image: AssetImage('images/home/leave_tjtp1_normal.png'),),
-                ),
-              ]
-          )
-      ),
-    );
-
-
-  }
-
-  alert(){
+  alert(int index){
     print("666");
-    if(images.length >=5){
-//      showToast("最多上传5张");
-      return;
-    }
     showDialog<Null>(
       context: context,
       builder: (BuildContext context) {
@@ -280,7 +265,7 @@ class _EvaluationState extends State<Evaluation> {
               ),),
               onPressed: () {
                 Navigator.of(context).pop();
-                _getImageFromCamera();
+                _getImageFromCamera(index);
               },
             ),
             new SimpleDialogOption(
@@ -290,7 +275,7 @@ class _EvaluationState extends State<Evaluation> {
               ),),
               onPressed: () {
                 Navigator.of(context).pop();
-                _getImageFromGallery();
+                _getImageFromGallery(index);
               },
             ),
           ],
@@ -301,28 +286,41 @@ class _EvaluationState extends State<Evaluation> {
     });
   }
 
-  Future _getImageFromCamera() async {
+  Future _getImageFromCamera(int index) async {
     var image =
     await ImagePicker.pickImage(source: ImageSource.camera, maxWidth: 400);
 
     setState(() {
-      images.add(image);
+      images.replaceRange(index, index +1, [image]);
     });
   }
 
   //相册选择
-  Future _getImageFromGallery() async {
+  Future _getImageFromGallery(int index) async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
 
     setState(() {
-      images.add(image);
+      images.replaceRange(index, index +1, [image]);
     });
   }
 
 
   imageAllUpdate(){
 
-    if(images.length > 0){
+    int index = -1;
+    for (int i = 0; i< images.length;i++){
+      if (images[i] == null){
+        index = i;
+        break;
+      }
+    }
+
+    if (index != -1){
+      showToast('请选择${requiresImage[index]['task_require_name']}（截图）');
+      return;
+    }
+
+    if(requiresImage.length > 0){
       imageStrs = List<String> ();
       showDialog<Null>(
           context: context,
@@ -380,7 +378,7 @@ class _EvaluationState extends State<Evaluation> {
     map.putIfAbsent("orderId", () => widget.orderId);
     map.putIfAbsent("images", () => img);
 
-    Com_Service().post(map, "/task/evaluate-order", (response){
+    Com_Service().post(map, "/task/finish-order", (response){
 
       print("提交成功");
       print(response);

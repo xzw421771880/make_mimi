@@ -3,6 +3,7 @@
 
 import 'package:dio/dio.dart';
 import 'package:make_mimi/api/river_api.dart';
+import 'package:make_mimi/utils/OutEvent.dart';
 import 'package:make_mimi/utils/http_util.dart';
 import 'package:make_mimi/utils/showtoast_util.dart';
 
@@ -21,9 +22,11 @@ class Com_Service {
       print(response);
       if (response['code'] == 200) {
         success(response["data"]);
-      } else if(response['code'] == 4032||response['code'] == 4032){
+      } else if(response['code'] == 4032||response['code'] == 4031){
+
 
         showToast("账号失效");
+        outEvent.fire('token失效');
       }else{
         showToast(response['message']);
         onFail(response['message']);
@@ -43,9 +46,13 @@ class Com_Service {
       print('成功');
       if (response['code'] == 200) {
         success(response["data"]);
-      } else if(response['code'] == 4032||response['code'] == 4032){
+      } else if(response['code'] == 4032||response['code'] == 4031){
 
         showToast("账号失效");
+        if(url == '/user/info'){
+          outEvent.fire('token失效');
+        }
+
       }else{
         showToast(response['message']);
         onFail(response['message']);

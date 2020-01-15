@@ -130,9 +130,10 @@ class _TaskState extends State<Task> {
     Map item = dataList[index];
     return GestureDetector(
       onTap: (){
-        Route_all.push(context, TaskDetail('1', (index){
+        Route_all.push(context, TaskDetail(item['id'], (index){
 
           print('1111');
+          _pullToRefresh();
         }));
       },
       child: Container(
@@ -163,13 +164,13 @@ class _TaskState extends State<Task> {
               left: 105,
               top: 40,
 
-              child: Text('本金：${item['goods_deal_price']}元'),
+              child: Text('本金：${double.parse(item['goods_deal_price']) *int.parse(item['goods_count'])}元'),
             ),
             Positioned(
               left: 105,
               top: 65,
 
-              child: Text('佣金：${item['task_amount']}元'),
+              child: Text('佣金：${item['task_commission']}元'),
             )
           ],
         ),

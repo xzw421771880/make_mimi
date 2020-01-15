@@ -10,40 +10,21 @@ import 'package:qr_flutter/qr_flutter.dart';
 class Invite extends StatefulWidget {
 
 
+  Map  user;
+
+  Invite(this.user);
+
   @override
   _InviteState createState() => _InviteState();
 }
 
 class _InviteState extends State<Invite> {
 
-
   @override
   void initState() {
     super.initState();
-    getDetail();
   }
 
-  getDetail() {
-//    print("getuser --------------");
-//    Map<String, dynamic> map = Map();
-//    map.putIfAbsent("prodId", () => widget.productId);
-//    Com_Service().get(map, "/prod/prodInfo", (response) {
-//      print("商品详情");
-//      print(response);
-//
-//      detailData = response;
-//      Map model = detailData['skuList'][0];
-//      sku = model['skuName'].toString().replaceAll(" ", ',');
-//      price = model['price'].toString();
-//      imageStr = model['pic'];
-//      setState(() {
-//        print("更新");
-//      });
-////      print(meModel.balanceUsdt);
-//    }, (fail) {
-//
-//    });
-  }
 
 
   @override
@@ -102,7 +83,7 @@ class _InviteState extends State<Invite> {
               height: 160,
 //              color: Colors.red,
               child: QrImage(
-                data: 'dsadadadasdsadasdad',
+                data: 'https://hao.360.com/?src=lm&ls=n31c42a959f',
 //                embeddedImage:  NetworkImage(
 //                    'http://yunhe.zy.hzchongqv.cn/uploads/image/logo.png'),
 //                embeddedImageStyle: QrEmbeddedImageStyle(
@@ -112,76 +93,76 @@ class _InviteState extends State<Invite> {
             ),
 
           ),
+//          Padding(
+//            padding: EdgeInsets.all(10),
+//            child: Container(
+//              alignment: Alignment.center,
+//              height: 35,
+////              color: Colors.red,
+//              child: Text('https://hao.360.com/?src=lm&ls=n31c42a959f',style: TextStyle(color: Color(0xff333333)),),
+//            ),
+//          ),
+//          Padding(
+//            padding: EdgeInsets.all(0),
+//            child: Container(
+//              height: 100,
+////              color: Colors.red,
+//              child: Stack(
+//                children: <Widget>[
+//                  Positioned(
+//                    left: (MediaQuery.of(context).size.width - 240)/2,
+//                    width: 90,
+//                    top: 20,
+//                    height: 40,
+//                    child: MaterialButton(
+//                      padding: EdgeInsets.all(0),
+//                      color: Colors.blue,
+//                      textColor: Colors.white,
+//                      child: Text('复制链接', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold,),
+//
+//                      ),
+//                      onPressed: () {
+//
+//                        ClipboardData data = new ClipboardData(
+//                            text: 'https://hao.360.com/?src=lm&ls=n31c42a959f');
+//                        Clipboard.setData(data);
+//                        showToast('复制成功',);
+//
+////                  Route_all.push(context, Login());
+//                      },
+//                    ),
+//
+//                  ),
+//                  Positioned(
+//                    right: (MediaQuery.of(context).size.width - 240)/2,
+//                    width: 90,
+//                    top: 20,
+//                    height: 40,
+//                    child: MaterialButton(
+//                      padding: EdgeInsets.all(0),
+//                      color: Colors.blue,
+//                      textColor: Colors.white,
+//                      child: Text('立即邀请', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold,),
+//
+//                      ),
+//                      onPressed: () {
+//
+////                  Route_all.push(context, Login());
+//                      },
+//                    ),
+//
+//                  )
+//                ],
+//              ),
+//            ),
+//          ),
           Padding(
             padding: EdgeInsets.all(10),
             child: Container(
               alignment: Alignment.center,
               height: 35,
 //              color: Colors.red,
-              child: Text('https://hao.360.com/?src=lm&ls=n31c42a959f',style: TextStyle(color: Color(0xff333333)),),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(0),
-            child: Container(
-              height: 100,
-//              color: Colors.red,
-              child: Stack(
-                children: <Widget>[
-                  Positioned(
-                    left: (MediaQuery.of(context).size.width - 240)/2,
-                    width: 90,
-                    top: 20,
-                    height: 40,
-                    child: MaterialButton(
-                      padding: EdgeInsets.all(0),
-                      color: Colors.blue,
-                      textColor: Colors.white,
-                      child: Text('复制链接', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold,),
-
-                      ),
-                      onPressed: () {
-
-                        ClipboardData data = new ClipboardData(
-                            text: 'https://hao.360.com/?src=lm&ls=n31c42a959f');
-                        Clipboard.setData(data);
-                        showToast('复制成功',);
-
-//                  Route_all.push(context, Login());
-                      },
-                    ),
-
-                  ),
-                  Positioned(
-                    right: (MediaQuery.of(context).size.width - 240)/2,
-                    width: 90,
-                    top: 20,
-                    height: 40,
-                    child: MaterialButton(
-                      padding: EdgeInsets.all(0),
-                      color: Colors.blue,
-                      textColor: Colors.white,
-                      child: Text('立即邀请', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold,),
-
-                      ),
-                      onPressed: () {
-
-//                  Route_all.push(context, Login());
-                      },
-                    ),
-
-                  )
-                ],
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(10),
-            child: Container(
-              alignment: Alignment.center,
-              height: 35,
-//              color: Colors.red,
-              child: Text('邀请码：111111',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16),),
+              child: Text('邀请码：${widget.user['invite_code']}',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16),),
             ),
           ),
 
@@ -200,9 +181,9 @@ class _InviteState extends State<Invite> {
                 onPressed: () {
 
                   print('复制');
-//                  ClipboardData data = new ClipboardData(
-//                      text: '111111');
-//                  Clipboard.setData(data);
+                  ClipboardData data = new ClipboardData(
+                      text: widget.user['invite_code']);
+                  Clipboard.setData(data);
 //                  print('复制');
                   showToast('复制成功');
                   print('复制');

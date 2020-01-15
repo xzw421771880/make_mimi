@@ -11,6 +11,10 @@ import 'package:make_mimi/utils/showtoast_util.dart';
 
 class Draw extends StatefulWidget {
 
+  String type;
+  String money;
+
+  Draw(this.type,this.money);
 
   @override
   _DrawState createState() => _DrawState();
@@ -24,32 +28,11 @@ class _DrawState extends State<Draw> {
   String rebankNum;
   String amount;
 
+  bool canDraw = true;
+
   @override
   void initState() {
     super.initState();
-    getDetail();
-  }
-
-  getDetail() {
-//    print("getuser --------------");
-//    Map<String, dynamic> map = Map();
-//    map.putIfAbsent("prodId", () => widget.productId);
-//    Com_Service().get(map, "/prod/prodInfo", (response) {
-//      print("商品详情");
-//      print(response);
-//
-//      detailData = response;
-//      Map model = detailData['skuList'][0];
-//      sku = model['skuName'].toString().replaceAll(" ", ',');
-//      price = model['price'].toString();
-//      imageStr = model['pic'];
-//      setState(() {
-//        print("更新");
-//      });
-////      print(meModel.balanceUsdt);
-//    }, (fail) {
-//
-//    });
   }
 
 
@@ -59,7 +42,7 @@ class _DrawState extends State<Draw> {
 
 
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
+//      resizeToAvoidBottomPadding: false,
       appBar: AppBar(
 //        textTheme: TextTheme(subtitle: "充币"),
           backgroundColor: Colors.white,
@@ -78,7 +61,7 @@ class _DrawState extends State<Draw> {
               child: Text('提现记录', style: TextStyle(color: Color(0xff333333),),),
               onPressed: (){
                 print("111");
-                Route_all.push(context, DrawRecord());
+                Route_all.push(context, DrawRecord(widget.type));
 
               },
             )
@@ -115,7 +98,7 @@ class _DrawState extends State<Draw> {
               height: 50,
               right: 15,
               child: MaterialButton(
-                color: Colors.blue,
+                color: canDraw? Colors.blue:Colors.grey,
                 textColor: Colors.white,
                 child: new Text('确认提交', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,),
 
@@ -123,7 +106,10 @@ class _DrawState extends State<Draw> {
                 onPressed: () {
 
                   print('确认提交');
-                  commit();
+                  if(canDraw){
+                    commit();
+                  }
+
                 },
               )
           )
@@ -170,7 +156,7 @@ class _DrawState extends State<Draw> {
             bottom: 0,
             child: Container(
               alignment: Alignment.centerLeft,
-              child: Text('可提现金额（元）：888.88元'),
+              child: Text('可提现金额（元）：${widget.money}元'),
             ),
           ),
           Positioned(
@@ -238,6 +224,17 @@ class _DrawState extends State<Draw> {
                   rebankNum = value;
                 }else{
                   amount = value;
+                  print(amount);
+                  if (amount.length>0&& double.parse(amount)>double.parse(widget.money)){
+                    print(111);
+                    canDraw = false;
+                  }else{
+                    canDraw = true;
+                    print(222);
+                  }
+                  setState(() {
+
+                  });
                 }
 
               },
@@ -390,6 +387,7 @@ class _DrawState extends State<Draw> {
     map.putIfAbsent("realName", () => realName);
     map.putIfAbsent("bankNum", () => bankNum);
     map.putIfAbsent("amount", () => amount);
+    map.putIfAbsent("type", () => widget.type);
 
     print(map);
 

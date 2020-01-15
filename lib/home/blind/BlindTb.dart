@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:make_mimi/config/router_utils.dart';
 import 'package:make_mimi/home/blind/TbCase.dart';
+import 'package:make_mimi/utils/Help.dart';
 import 'package:make_mimi/utils/RefundReason.dart';
 import 'package:make_mimi/utils/com_service.dart';
 import 'package:make_mimi/utils/showtoast_util.dart';
@@ -14,6 +15,8 @@ import 'package:make_mimi/utils/showtoast_util.dart';
 
 class BlindTb extends StatefulWidget {
 
+  Map data;
+  BlindTb(this.data);
 
   @override
   _BlindTbState createState() => _BlindTbState();
@@ -23,17 +26,20 @@ class _BlindTbState extends State<BlindTb> {
 
 
   String tb_name;
-  String tb_level;
+  String tb_level = '1';
+  String tb_type = '心';
   String tb_sex = '男';
   String consignee;
   String consignee_num;
   String address;
 
-  File tbFile;
-  File zfbFile;
+//  File tbFile;
+//  File zfbFile;
+//  File xjFile;
 
   String tbStr;
   String zfbStr;
+  String xjStr;
   String province;
   String city;
   String area;
@@ -41,8 +47,31 @@ class _BlindTbState extends State<BlindTb> {
   @override
   void initState() {
     super.initState();
+    tb_name = widget.data['taobao_name'] == null?'':widget.data['taobao_name'];
+    tb_level = widget.data['taobao_level'] == null?'1':widget.data['taobao_level'].toString();
+    tb_type = widget.data['level_type'] == null?'心':['心','蓝钻','蓝冠','金冠'][int.parse(widget.data['level_type'])];
+
+    tb_sex = widget.data['taobao_sex'] == null?'':widget.data['taobao_sex'];
+    consignee = widget.data['consignee'] == null?'':widget.data['consignee'];
+    consignee_num = widget.data['consignee_num'] == null?'':widget.data['consignee_num'];
+    address = widget.data['detailed_address'] == null?'':widget.data['detailed_address'];
+    province = widget.data['province'] == null?'':widget.data['province'];
+    city = widget.data['city'] == null?'':widget.data['city'];
+    area = widget.data['district'] == null?'':widget.data['district'];
+
+    if(widget.data['taobao_info'] != null){
+      List images = widget.data['taobao_info'].toString().split(',');
+      tbStr = images[0];
+      xjStr = images[1];
+    }
+
+    zfbStr = widget.data['alipay_info'] == null?null:widget.data['alipay_info'];
+
+
 
   }
+
+
 
 
   @override
@@ -74,14 +103,18 @@ class _BlindTbState extends State<BlindTb> {
 
                   buildWarn(),
                   buildText(0),
-                  buildText(1),
+//                  buildText(1),
                   buildCell(0),
+                  buildCell(1),
+                  buildCell(2),
                   buildText(2),
                   buildText(3),
-                  buildCell(1),
+                  buildCell(3),
                   buildText(4),
                   buildImagetitle(),
-                  buildImages()
+                  buildImages(0),
+                  buildImages(1),
+                  buildImages(2),
                 ],
               )
           ),
@@ -122,7 +155,7 @@ class _BlindTbState extends State<BlindTb> {
             padding: EdgeInsets.only(left: 50,right: 50,top: 5,bottom: 15),
             child: Container(
               height: 150,
-              color: Colors.grey,
+              child: Image(image: AssetImage('images/home/home_blind_tbmess.png'),fit: BoxFit.cover,),
             ),
           )
         ],
@@ -132,13 +165,57 @@ class _BlindTbState extends State<BlindTb> {
 
   Widget buildCell(int index){
 
-    List titleList = ['淘宝号性别','收货省市'];
-    List detailList = [tb_sex,province == null?'请选择':province+city+area];
+    List titleList = ['淘宝号心级','淘宝心级类型','淘宝号性别','收货省市'];
+    List detailList = [tb_level,tb_type,tb_sex,province == null?'请选择':province+city+area];
 
 
     return GestureDetector(
       onTap: () async{
+
         if(index == 0){
+          showDialog(
+              context: context,
+              builder: (BuildContext context){
+                return RefundReason(['1','2','3','4','5'],(resonBack){
+
+                  tb_level = resonBack;
+                  setState(() {
+
+                  });
+                });
+              }
+          );
+        }
+
+        if(index == 1){
+          showDialog(
+              context: context,
+              builder: (BuildContext context){
+                return RefundReason(['心','蓝钻','蓝冠','金冠'],(resonBack){
+
+                  tb_type = resonBack;
+                  setState(() {
+
+                  });
+                });
+              }
+          );
+        }
+        if(index == 2){
+          showDialog(
+              context: context,
+              builder: (BuildContext context){
+                return RefundReason(['男','女'],(resonBack){
+
+                  tb_sex = resonBack;
+                  setState(() {
+
+                  });
+                });
+              }
+          );
+        }
+        if(index == 2){
           showDialog(
               context: context,
               builder: (BuildContext context){
@@ -153,7 +230,7 @@ class _BlindTbState extends State<BlindTb> {
           );
         }
 
-        if(index == 1){
+        if(index == 3){
           Result result = await CityPickers.showCityPicker(
               context: context, height: 300.0);
           print(result);
@@ -268,6 +345,7 @@ class _BlindTbState extends State<BlindTb> {
     List titleList = ['淘宝会员名','淘宝号心级','收货人','收货人手机','收货详细地址'];
     List hintList = ['请输入淘宝会员名','请输入心级','收货人姓名（必须与淘宝一致）','请输入收货人手机','详细地址'];
 
+    List<TextInputType> inputList = [TextInputType.text,TextInputType.phone,TextInputType.text,TextInputType.phone,TextInputType.text];
 
     return Container(
       height: 50,
@@ -292,7 +370,7 @@ class _BlindTbState extends State<BlindTb> {
             child: TextField(
 //              style: TextStyle(textBaseline: TextBaseline.alphabetic),
               cursorColor: Colors.grey,
-              keyboardType: TextInputType.visiblePassword,
+              keyboardType: inputList[index],
               decoration:  new InputDecoration(
                 hintText: hintList[index],
                 contentPadding: EdgeInsets.only(top: 14,bottom: 0),
@@ -301,6 +379,10 @@ class _BlindTbState extends State<BlindTb> {
                   fontSize: 14,
                 ),
               ),
+              controller: TextEditingController.fromValue(TextEditingValue(
+                text: [tb_name,tb_level,consignee,consignee_num,address][index]
+              )),
+
               onChanged: (value){
 
                 if(index == 0) {
@@ -333,21 +415,34 @@ class _BlindTbState extends State<BlindTb> {
   }
 
 
-  Widget buildImages(){
+  Widget buildImages(int index){
 
-    Image tbImage;
-    Image zfbImage;
-    if(tbFile == null){
-      tbImage = Image(image: AssetImage('images/home/home_blind_tb.png'));
+    Image image;
+
+
+    if(index == 0){
+      if(tbStr == null){
+        image = Image(image: AssetImage('images/home/home_blind_tb.png'));
+      }else{
+        image = Image.network(tbStr,fit: BoxFit.cover,);
+      }
+    }else if(index == 1){
+      if(zfbStr== null){
+        image = Image(image: AssetImage('images/home/home_blind_zfb.png'));
+      }else{
+        image = Image.network(zfbStr,fit: BoxFit.cover,);
+      }
     }else{
-      tbImage = Image.file(tbFile,fit: BoxFit.cover,);
+      if(xjStr == null){
+        image = Image(image: AssetImage('images/home/home_blind_tbxj.png'));
+      }else{
+        image = Image.network(xjStr,fit: BoxFit.cover,);
+      }
     }
 
-    if(zfbFile == null){
-      zfbImage = Image(image: AssetImage('images/home/home_blind_zfb.png'));
-    }else{
-      zfbImage = Image.file(zfbFile,fit: BoxFit.cover,);
-    }
+
+
+
 
 
 
@@ -362,24 +457,11 @@ class _BlindTbState extends State<BlindTb> {
             height: 100,
             child: GestureDetector(
               onTap: (){
-                alert(0);
+                alert(index);
               },
-              child: tbImage,
+              child: image,
             ),
           ),
-          Positioned(
-            right: 50,
-            top: 40,
-            width: 100,
-            height: 100,
-            child: GestureDetector(
-              onTap: (){
-                alert(1);
-                print('zfb');
-              },
-              child: zfbImage,
-            ),
-          )
         ],
       ),
     );
@@ -442,16 +524,6 @@ class _BlindTbState extends State<BlindTb> {
 
   }
 
-  saveFile(File image,int index){
-    if (index == 0){
-      tbFile = image;
-    }else{
-      zfbFile = image;
-    }
-    setState(() {
-
-    });
-  }
 
   //上传图片到服务器
   _uploadImage(File file,int index) async {
@@ -469,10 +541,14 @@ class _BlindTbState extends State<BlindTb> {
       print(response);
       if (index == 0){
         tbStr = response['url'];
-      }else{
+      }else if(index == 1){
         zfbStr = response['url'];
+      }else{
+        xjStr = response['url'];
       }
-      saveFile(file, index);
+      setState(() {
+
+      });
 
 
     }, (fail){
@@ -503,6 +579,14 @@ class _BlindTbState extends State<BlindTb> {
       return;
     }
 
+    if (!Helps().isChinaPhoneLegal(consignee_num)){
+
+      showToast('手机号码格式不正确');
+      return;
+    }
+
+
+
     if (province == null){
       showToast('请选择省市区');
       return;
@@ -527,6 +611,7 @@ class _BlindTbState extends State<BlindTb> {
 
     map.putIfAbsent("taobao_name", () => tb_name);
     map.putIfAbsent("taobao_level", () => tb_level);
+    map.putIfAbsent("level_type", () => tb_type);
     map.putIfAbsent("taobao_sex", () => tb_sex);
     map.putIfAbsent("consignee", () => consignee);
     map.putIfAbsent("consignee_num", () => consignee_num);
@@ -534,7 +619,7 @@ class _BlindTbState extends State<BlindTb> {
     map.putIfAbsent("city", () => city);
     map.putIfAbsent("district", () => area);
     map.putIfAbsent("detailed_address", () => address);
-    map.putIfAbsent("taobao_info", () => tbStr);
+    map.putIfAbsent("taobao_info", () => tbStr+','+xjStr);
     map.putIfAbsent("alipay_info", () => zfbStr);
 
     print(map);

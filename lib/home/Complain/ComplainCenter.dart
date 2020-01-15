@@ -18,6 +18,7 @@ class _ComplainCenterState extends State<ComplainCenter> {
 
   int currentIndex = 0;
   List dataList = List();
+  int currentPage = 1;
 
   @override
   void initState() {
@@ -28,14 +29,17 @@ class _ComplainCenterState extends State<ComplainCenter> {
   getData() {
     print("getuser --------------");
     Map<String, dynamic> map = Map();
-    map.putIfAbsent("type", () => 1);
-    map.putIfAbsent("page", () => 1);
+    map.putIfAbsent("type", () => currentIndex == 0? 2:1);
+    map.putIfAbsent("page", () => currentPage);
     map.putIfAbsent("pageSize", () => 20);
     Com_Service().get(map, "/appeal/appeal-list", (response) {
       print("商品详情");
       print(response);
       List list = response['list'];
 
+      if (currentPage == 1){
+        dataList.clear();
+      }
       dataList.addAll(list);
       print(list);
       print(dataList);
@@ -53,7 +57,7 @@ class _ComplainCenterState extends State<ComplainCenter> {
   Future _pullToRefresh() async {
     print("111");
 //    currentPage = 1;
-//    getOrderList();
+    getData();
     return null;
   }
 
@@ -73,18 +77,7 @@ class _ComplainCenterState extends State<ComplainCenter> {
               Navigator.pop(context);
             }),
         elevation: 0,
-        actions: <Widget>[
-          MaterialButton(
 
-            child: Text('发起申诉', style: TextStyle(color: Color(0xff333333),),),
-            onPressed: (){
-              print("111");
-              Route_all.push(context, CommitComplain());
-
-            },
-          )
-
-        ],
       ),
       body: Stack(
         children: <Widget>[
@@ -97,7 +90,7 @@ class _ComplainCenterState extends State<ComplainCenter> {
 
                 currentIndex = index;
                 print(index);
-//                _pullToRefresh();
+                _pullToRefresh();
                 setState(() {
 
                 });
@@ -141,7 +134,7 @@ class _ComplainCenterState extends State<ComplainCenter> {
 
     return GestureDetector(
       onTap: (){
-        Route_all.push(context, ComplainDetail());
+        Route_all.push(context, ComplainDetail(item['id']));
       },
       child: Container(
           color: Colors.white,
@@ -177,7 +170,7 @@ class _ComplainCenterState extends State<ComplainCenter> {
                         bottom: 0,
                         child: Container(
                           alignment: Alignment.centerRight,
-                          child: Text(item['type']),
+                          child: Text(item['appeal_type']),
                         ),
                       )
                     ],

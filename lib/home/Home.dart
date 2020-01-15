@@ -2,18 +2,22 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_jpush/flutter_jpush.dart';
+import 'package:make_mimi/Task/TaskDetail.dart';
 import 'package:make_mimi/config/router_utils.dart';
 import 'package:make_mimi/home/Complain/ComplainCenter.dart';
 import 'package:make_mimi/home/HelpCenter.dart';
 import 'package:make_mimi/home/Information.dart';
 import 'package:make_mimi/home/Invite.dart';
 import 'package:make_mimi/home/Notice.dart';
+import 'package:make_mimi/home/Order/OrderDetail.dart';
 import 'package:make_mimi/home/Order/ReciverOrder.dart';
 import 'package:make_mimi/home/Order/TaskOrder.dart';
 import 'package:make_mimi/home/blind/Blind.dart';
 import 'package:make_mimi/home/money/Draw.dart';
 import 'package:make_mimi/home/money/Topup.dart';
 import 'package:make_mimi/home/set/Setup.dart';
+import 'package:make_mimi/utils/Help.dart';
+import 'package:make_mimi/utils/OutEvent.dart';
 import 'package:make_mimi/utils/com_service.dart';
 
 class Home extends StatefulWidget {
@@ -29,6 +33,10 @@ class _HomeState extends State<Home> {
     super.initState();
     _initJPush();
     getInfo();
+
+    outEvent.on().listen((value){
+      Helps().out(context, true);
+    });
   }
   void _initJPush() async {
     await FlutterJPush.startup();
@@ -46,7 +54,19 @@ class _HomeState extends State<Home> {
     FlutterJPush.addReceiveNotificationListener(
             (JPushNotification notification) {
 
-          print("收到推送提醒: $notification");
+          print("收到推送提醒: ${notification.id}");
+          print("收到推送提醒: ${notification.extras}");
+          if(notification.extras['target'] == 'task'){
+            Route_all.push(context, TaskDetail(notification.extras['targetId'].toString(), (index){
+
+              print('1111');
+            }));
+          }
+
+          if(notification.extras['target'] == 'order'){
+            Route_all.push(context, OrderDetail(notification.extras['targetId'].toString()));
+          }
+
           print(notification);
         }
     );
@@ -99,6 +119,7 @@ class _HomeState extends State<Home> {
             buildTitle(),
             Container(height: 5,),
             buildNumber(),
+            Container(height: 5,),
             buildTask(),
             buildTaskStatus(),
 //            buildCommit()
@@ -118,7 +139,7 @@ class _HomeState extends State<Home> {
       if(user['realName'] != null){
         name = user['realName'];
       }else{
-        name = user['mobile'].toString();
+        name = '未认证';
       }
       phone = user['mobile'].toString().substring(0,3)+"****"+user['mobile'].toString().substring(7,11);
     }
@@ -242,7 +263,11 @@ class _HomeState extends State<Home> {
           onTap: (){
             print('------${i}');
             if(i == 0){//邀请好友
-              Route_all.push(context, Invite());
+              if(user == null){
+                print('请登录');
+              }else{
+                Route_all.push(context, Invite(user));
+              }
             }else if(i == 1){//帮助中心
               Route_all.push(context, HelpCenter());
             }else if(i == 2){//申诉中心
@@ -337,7 +362,7 @@ class _HomeState extends State<Home> {
                   child: GestureDetector(
                     onTap: (){
                       print('提现');
-                      Route_all.push(context, Draw());
+                      Route_all.push(context, Draw(['10','2','4'][i],[user['totalRevenue'].toString(),user['balance'],user['deposit']][i]));
                     },
                     child: Container(
                       color: Colors.white,
@@ -382,7 +407,7 @@ class _HomeState extends State<Home> {
     return GestureDetector(
       onTap: (){
         print('我的任务');
-        Route_all.push(context, TaskOrder(0));
+//        Route_all.push(context, TaskOrder(0));
       },
       child: Container(
         color: Colors.white,
@@ -399,23 +424,23 @@ class _HomeState extends State<Home> {
                 child: Text('我的任务',style: TextStyle(fontSize: 16),),
               ),
             ),
-            Positioned(
-              right: 50,
-              top: 0,
-              bottom: 0,
-              width: 150,
-              child: Container(
-                alignment: Alignment.centerRight,
-                child: Text('查看全部任务',style: TextStyle(fontSize: 14,color: Color(0xff444444)),),
-              ),
-            ),
-            Positioned(
-              right: 20,
-              top: 17.5,
-              width: 15,
-              height: 15,
-              child: Image(image: AssetImage('images/home/home_right.png'),),
-            )
+//            Positioned(
+//              right: 50,
+//              top: 0,
+//              bottom: 0,
+//              width: 150,
+//              child: Container(
+//                alignment: Alignment.centerRight,
+//                child: Text('查看全部任务',style: TextStyle(fontSize: 14,color: Color(0xff444444)),),
+//              ),
+//            ),
+//            Positioned(
+//              right: 20,
+//              top: 17.5,
+//              width: 15,
+//              height: 15,
+//              child: Image(image: AssetImage('images/home/home_right.png'),),
+//            )
           ],
         ),
       ),
@@ -425,7 +450,7 @@ class _HomeState extends State<Home> {
   //首页分类
   Widget buildTaskStatus(){
 
-    List<String> titleList  = ['待接受','进行中','审核中','已超时'];
+    List<String> titleList  = ['全部','进行中','已完成','已取消'];
     List<String> imageList = ['home_task_wait','home_task_doing','home_task_review','home_task_over'];
     List<Positioned> pList = new List();
 
@@ -439,15 +464,8 @@ class _HomeState extends State<Home> {
         child: GestureDetector(
           onTap: (){
             print('------${i}');
-            if(i == 0){//新品推荐
-              Route_all.push(context, TaskOrder(1));
-            }else if(i == 1){//限时特惠
-              Route_all.push(context, TaskOrder(2));
-            }else if(i == 2){//秒杀专场
-              Route_all.push(context, TaskOrder(3));
-            }else if(i == 3){//领优惠券
-              Route_all.push(context, TaskOrder(6));
-            }
+            Route_all.push(context, TaskOrder(i));
+
           },
           child: Container(
             color: Colors.white,
@@ -476,7 +494,7 @@ class _HomeState extends State<Home> {
 
     return Container(
       height: 80,
-//      color: Colors.red,
+      color: Colors.white,
       child: Stack(
         children:pList,
       ),

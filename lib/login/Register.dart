@@ -91,7 +91,7 @@ class _RegisterState extends State<Register> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      resizeToAvoidBottomPadding: false,
+//      resizeToAvoidBottomPadding: false,
       appBar: AppBar(
 //        textTheme: TextTheme(subtitle: "充币"),
         backgroundColor: Colors.white,
@@ -112,7 +112,7 @@ class _RegisterState extends State<Register> {
               left: 0,
               right: 0,
               top: 0,
-              bottom: 50,
+              bottom: 70,
               child:ListView(
 
                 children: <Widget>[
@@ -130,7 +130,7 @@ class _RegisterState extends State<Register> {
           ),
           Positioned(
               left: 15,
-              bottom: MediaQuery.of(context).padding.bottom,
+              bottom: MediaQuery.of(context).padding.bottom+20,
               height: 50,
               right: 15,
               child: MaterialButton(
@@ -424,15 +424,28 @@ class _RegisterState extends State<Register> {
 
   nextCommit(){
 
-//    if(msgCode == null){
-//      showToast('请输入验证码');
-//      return;
-//    }
-//
-//    if(msgCode.length < 6){
-//      showToast('请输入验证码');
-//      return;
-//    }
+//    Route_all.push(context, Certification());
+//    return;
+
+    if(mobile == null){
+      showToast('请输入手机号码');
+      return;
+    }
+    if (!Helps().isChinaPhoneLegal(mobile)){
+
+      showToast('手机号码格式不正确');
+      return;
+    }
+
+    if(msgCode == null){
+      showToast('请输入验证码');
+      return;
+    }
+
+    if(msgCode.length < 6){
+      showToast('请输入验证码');
+      return;
+    }
 
     if(password == null){
       showToast('请输入密码');
@@ -459,6 +472,11 @@ class _RegisterState extends State<Register> {
       return;
     }
 
+    if(inviteCode == null){
+      showToast('请输入邀请码');
+      return;
+    }
+
 
 
 
@@ -467,8 +485,8 @@ class _RegisterState extends State<Register> {
     print('3333');
     map.putIfAbsent("mobile", () => mobile);
     map.putIfAbsent("password", () => password);
-    map.putIfAbsent("inviteCode", () => 'asEcfg');
-    map.putIfAbsent("msgCode", () => '888888');
+    map.putIfAbsent("inviteCode", () => inviteCode);
+    map.putIfAbsent("msgCode", () => msgCode);
 
     map.putIfAbsent("icq", () => icq);
     map.putIfAbsent("sex", () => sex);
@@ -483,8 +501,11 @@ class _RegisterState extends State<Register> {
       print("注册成功");
       print(response);
       showToast('注册成功');
-      Navigator.pop(context);
+      Helps().saveToke(response['token']);
+      Route_all.push(context, Certification());
+//      Navigator.pop(context);
     }, (fail) {
+
       print("失败");
 
     });

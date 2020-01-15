@@ -11,6 +11,9 @@ import 'package:make_mimi/utils/showtoast_util.dart';
 
 class CommitComplain extends StatefulWidget {
 
+  String orderId;
+  CommitComplain(this.orderId);
+
 
   @override
   _CommitComplainState createState() => _CommitComplainState();
@@ -208,23 +211,10 @@ class _CommitComplainState extends State<CommitComplain> {
             right: 15,
             top: 0,
             bottom: 0,
-            child: TextField(
-//              style: TextStyle(textBaseline: TextBaseline.alphabetic),
-              cursorColor: Colors.grey,
-              keyboardType: TextInputType.visiblePassword,
-              decoration:  new InputDecoration(
-                hintText: '请输入要取消的编号',
-                contentPadding: EdgeInsets.only(top: 14,bottom: 0),
-                border: InputBorder.none,
-                hintStyle: TextStyle(
-                  fontSize: 14,
-                ),
-              ),
-              onChanged: (value){
-
-                taskNum = value;
-              },
-            ),
+            child: Container(
+              alignment: Alignment.centerLeft,
+              child: Text(widget.orderId),
+            )
           ),
           Positioned(
             right: 5,
@@ -449,10 +439,7 @@ class _CommitComplainState extends State<CommitComplain> {
       showToast("请选择申诉类型");
       return;
     }
-    if(taskNum == null||taskNum.length == 0){
-      showToast("请输入任务单号");
-      return;
-    }
+
     if(appealState == null||appealState.length == 0){
       showToast("请输入申诉说明");
       return;
@@ -519,9 +506,11 @@ class _CommitComplainState extends State<CommitComplain> {
 
     print("提交");
     Map<String, dynamic> map = Map();
-    map.putIfAbsent("taskNum", () => taskNum);
+    map.putIfAbsent("taskNum", () => widget.orderId);
     map.putIfAbsent("appealState", () => appealState);
     map.putIfAbsent("appeal_type", () => reson);
+    map.putIfAbsent("return_type", () => '1');//返还类型1=>'返本金',2=>'返佣金'
+    map.putIfAbsent("return_amount", () => '1');
     map.putIfAbsent("appealImg", () => img);
 
     Com_Service().post(map, "/appeal/submit-appeal", (response){

@@ -55,7 +55,7 @@ class _TopupState extends State<Topup> {
 
 
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
+//      resizeToAvoidBottomPadding: false,
       appBar: AppBar(
 //        textTheme: TextTheme(subtitle: "充币"),
         backgroundColor: Colors.white,

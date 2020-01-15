@@ -3,6 +3,7 @@ import 'package:make_mimi/config/router_utils.dart';
 import 'package:make_mimi/home/set/ChangPwd.dart';
 import 'package:make_mimi/home/set/FeedBack.dart';
 import 'package:make_mimi/login/login.dart';
+import 'package:make_mimi/utils/Help.dart';
 
 
 class Setup extends StatefulWidget {
@@ -91,8 +92,43 @@ class _SetupState extends State<Setup> {
                 ),
                 onPressed: () {
 
-                  print('退出');
-                  Route_all.push(context, Login());
+                  showDialog<Null>(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (BuildContext context) {
+                      return  AlertDialog(
+                        title:  Text('警告'),
+                        content:  SingleChildScrollView(
+                          child:  ListBody(
+                            children: <Widget>[
+                              Text('是否确认退出', style: TextStyle(
+                                ///字体颜色
+                                color: Colors.red,
+                                ///字体的大小
+                                fontSize: 16,
+                              )),
+                            ],
+                          ),
+                        ),
+                        actions: <Widget>[
+                          FlatButton(
+                            child:  Text('确定'),
+                            onPressed: () {
+                              Helps().out(context,false);
+                            },
+                          ),
+                          FlatButton(
+                            child:  Text('取消'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+
+
                 },
               )
           )

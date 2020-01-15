@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:make_mimi/utils/RefundReason.dart';
+import 'package:make_mimi/utils/com_service.dart';
+import 'package:make_mimi/utils/showtoast_util.dart';
 
+typedef backBlock();
 
 class CancelOrder extends StatefulWidget {
 
+
+  String orderId;
+  backBlock back;
+  CancelOrder(this.orderId,this.back);
 
   @override
   _CancelOrderState createState() => _CancelOrderState();
@@ -16,31 +23,7 @@ class _CancelOrderState extends State<CancelOrder> {
   @override
   void initState() {
     super.initState();
-    getDetail();
   }
-
-  getDetail() {
-//    print("getuser --------------");
-//    Map<String, dynamic> map = Map();
-//    map.putIfAbsent("prodId", () => widget.productId);
-//    Com_Service().get(map, "/prod/prodInfo", (response) {
-//      print("商品详情");
-//      print(response);
-//
-//      detailData = response;
-//      Map model = detailData['skuList'][0];
-//      sku = model['skuName'].toString().replaceAll(" ", ',');
-//      price = model['price'].toString();
-//      imageStr = model['pic'];
-//      setState(() {
-//        print("更新");
-//      });
-////      print(meModel.balanceUsdt);
-//    }, (fail) {
-//
-//    });
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -89,6 +72,7 @@ class _CancelOrderState extends State<CancelOrder> {
                 onPressed: () {
 
                   print('确认取消');
+                  commit();
                 },
               )
           )
@@ -192,21 +176,9 @@ class _CancelOrderState extends State<CancelOrder> {
             right: 15,
             top: 0,
             bottom: 0,
-            child: TextField(
-//              style: TextStyle(textBaseline: TextBaseline.alphabetic),
-              cursorColor: Colors.grey,
-              keyboardType: TextInputType.visiblePassword,
-              decoration:  new InputDecoration(
-                hintText: '请输入要取消的编号',
-                contentPadding: EdgeInsets.only(top: 14,bottom: 0),
-                border: InputBorder.none,
-                hintStyle: TextStyle(
-                  fontSize: 14,
-                ),
-              ),
-              onChanged: (value){
-
-              },
+            child: Container(
+              alignment: Alignment.centerLeft,
+              child: Text(widget.orderId),
             ),
           ),
           Positioned(
@@ -221,6 +193,31 @@ class _CancelOrderState extends State<CancelOrder> {
         ],
       ),
     );
+  }
+
+  commit(){
+
+    if(reson == null){
+      showToast('请选择取消原因');
+      return;
+    }
+
+    print("提交");
+    Map<String, dynamic> map = Map();
+    map.putIfAbsent("orderId", () => widget.orderId);
+    map.putIfAbsent("content", () => reson);
+
+    Com_Service().post(map, "/task/cancel-order", (response){
+
+      print("取消成功");
+      print(response);
+      showToast("取消成功！！！");
+      widget.back();
+      Navigator.pop(context);
+    }, (fail){
+
+    });
+
   }
 
 

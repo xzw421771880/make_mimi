@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_jpush/flutter_jpush.dart';
+import 'package:make_mimi/Mimi.dart';
 import 'package:make_mimi/config/router_utils.dart';
 import 'package:make_mimi/login/Forget.dart';
 import 'package:make_mimi/login/Register.dart';
@@ -9,6 +11,8 @@ import 'package:make_mimi/utils/showtoast_util.dart';
 
 class Login extends StatefulWidget {
 
+  bool isBack;
+  Login(this.isBack);
 
   @override
   _LoginState createState() => _LoginState();
@@ -35,11 +39,11 @@ class _LoginState extends State<Login> {
         title: Text('登录', style: TextStyle(fontSize: 15,
           fontWeight: FontWeight.bold,
           color: Color(0xff333333),),),
-        leading: new IconButton(icon: Icon(Icons.arrow_back_ios),
+        leading: widget.isBack?new IconButton(icon: Icon(Icons.arrow_back_ios),
             color: Color(0xff333333),
             onPressed: () {
               Navigator.pop(context);
-            }),
+            }):Container(),
         actions: <Widget>[
           MaterialButton(
 
@@ -61,7 +65,7 @@ class _LoginState extends State<Login> {
               left: 0,
               right: 0,
               top: 0,
-              bottom: 50,
+              bottom: 70,
               child:ListView(
 
                 children: <Widget>[
@@ -75,7 +79,7 @@ class _LoginState extends State<Login> {
           ),
           Positioned(
               left: 15,
-              bottom: MediaQuery.of(context).padding.bottom,
+              bottom: MediaQuery.of(context).padding.bottom + 20,
               height: 50,
               right: 15,
               child: MaterialButton(
@@ -245,11 +249,24 @@ class _LoginState extends State<Login> {
       print(response);
       showToast('登录成功');
       Helps().saveToke(response['token']);
-      Navigator.pop(context);
+      blind(response['user_id'].toString());
+      Route_all.pushAndRemove(context, Mimi());
     }, (fail) {
       print("失败");
 
     });
   }
+
+  blind(String userid){
+
+    // 设置别名指定设备推送 下方填写用户id
+    //setAlias 设置用户别名用于极光指定推送
+    FlutterJPush.setAlias(userid).then((map){
+      print("设置用户推送别名---------------");
+      print(map);
+    });
+  }
+
+
 
 }

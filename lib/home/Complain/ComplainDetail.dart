@@ -1,15 +1,22 @@
 
 import 'package:flutter/material.dart';
+import 'package:make_mimi/utils/Help.dart';
+import 'package:make_mimi/utils/com_service.dart';
 
 
 class ComplainDetail extends StatefulWidget {
 
+  String id;
+
+  ComplainDetail(this.id);
 
   @override
   _ComplainDetailState createState() => _ComplainDetailState();
 }
 
 class _ComplainDetailState extends State<ComplainDetail> {
+
+  Map data;
 
 
   @override
@@ -19,25 +26,21 @@ class _ComplainDetailState extends State<ComplainDetail> {
   }
 
   getDetail() {
-//    print("getuser --------------");
-//    Map<String, dynamic> map = Map();
-//    map.putIfAbsent("prodId", () => widget.productId);
-//    Com_Service().get(map, "/prod/prodInfo", (response) {
-//      print("商品详情");
-//      print(response);
-//
-//      detailData = response;
-//      Map model = detailData['skuList'][0];
-//      sku = model['skuName'].toString().replaceAll(" ", ',');
-//      price = model['price'].toString();
-//      imageStr = model['pic'];
-//      setState(() {
-//        print("更新");
-//      });
-////      print(meModel.balanceUsdt);
-//    }, (fail) {
-//
-//    });
+    print("getuser --------------");
+    Map<String, dynamic> map = Map();
+    map.putIfAbsent("id", () => widget.id);
+    Com_Service().post(map, "/appeal/appeal-details", (response) {
+      print("商品详情");
+      print(response);
+      data = response;
+
+      setState(() {
+        print("更新");
+      });
+//      print(meModel.balanceUsdt);
+    }, (fail) {
+
+    });
   }
 
 
@@ -74,7 +77,7 @@ class _ComplainDetailState extends State<ComplainDetail> {
 
   Widget buildCell(int index){
 
-    List list = ['任务ID：123456','申述店铺：××旗舰店','申述类型：违规操作','申述状态：客服通过申述','申述时间：2019-10-10 10:10','申述内容：买手违规使用花呗','申述图片：'];
+    List list = ['任务ID： ${data == null?'**': data['task_num']}','申述店铺：${data == null?'**': data['task_num']}','申述类型：${data == null?'**': data['appeal_type']}','申述状态：客服通过申述','申述时间：${data == null?'**':Helps().strToDate(data['created_at'])  }','申述内容：${data == null?'**': data['appeal_state']}','申述图片：'];
 
     return Container(
 
@@ -99,22 +102,24 @@ class _ComplainDetailState extends State<ComplainDetail> {
 
   Widget buildImage(){
 
+    List images = data['appeal_img'].toString().split(',');
+
+    List<Padding> pads = List();
+    for (int i = 0;i<images.length;i++){
+
+      pads.add(Padding(padding: EdgeInsets.only(left: 50,right: 50,top: 10,bottom: 10),
+        child: Container(
+          height: 150,
+          child: Image.network(images[i]),
+        ),
+      ));
+    }
+
     return Container(
       color: Colors.white,
-      height: 220,
-      child: Stack(
-        children: <Widget>[
-          Positioned(
-            left: 30,
-            right: 30,
-            top: 10,
-            bottom: 10,
-            child: Container(
-              color: Colors.grey,
-            ),
-          )
-        ],
-      ),
+      child:Column(
+        children: pads,
+      )
     );
   }
 

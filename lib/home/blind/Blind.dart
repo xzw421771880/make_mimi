@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:make_mimi/config/router_utils.dart';
 import 'package:make_mimi/home/blind/BlindTb.dart';
+import 'package:make_mimi/utils/com_service.dart';
 
 
 class Blind extends StatefulWidget {
@@ -12,11 +13,32 @@ class Blind extends StatefulWidget {
 
 class _BlindState extends State<Blind> {
 
+  Map data;
+  List statusList;
 
   @override
   void initState() {
     super.initState();
 
+    getStatus();
+  }
+
+  getStatus(){
+
+    Com_Service().post(Map(), "/user/get-binding-taobao", (response) {
+
+      print("绑定状态");
+      print(response);
+      data = response;
+      statusList = data['range']['status'];
+      setState(() {
+
+      });
+
+    }, (fail) {
+      print("失败");
+
+    });
   }
 
 
@@ -50,12 +72,22 @@ class _BlindState extends State<Blind> {
   Widget buildCell(int index){
 
     List titleList = ['淘宝'];
+    String status;
+    if(data != null){
+      if(data['status'] != null){
+        status = statusList[int.parse(data['status'])];
+      }else{
+        status = '未绑定';
+      }
+    }else{
+      status = '未绑定';
+    }
 
 
     return GestureDetector(
       onTap: (){
 
-        Route_all.push(context, BlindTb());
+        Route_all.push(context, BlindTb(data == null?Map():data));
       },
       child: Container(
 
@@ -71,6 +103,16 @@ class _BlindState extends State<Blind> {
               child: Container(
                 alignment: Alignment.centerLeft,
                 child: Text(titleList[index]),
+              ),
+            ),
+            Positioned(
+              right: 50,
+              top: 0,
+              bottom: 0,
+              width: 700,
+              child: Container(
+                alignment: Alignment.centerRight,
+                child: Text(status),
               ),
             ),
             Positioned(
