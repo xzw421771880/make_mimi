@@ -18,10 +18,28 @@ class Helps{
     getToken();
   }
 
+
+
   getToken() async{
     SharedPreferences sharedPreferences =
     await SharedPreferences.getInstance();
     String token = sharedPreferences.getString('token');
+    print(token);
+    return token;
+  }
+
+  saveFirst(String token) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('first', token);
+    getToken();
+  }
+
+
+
+  getFirst() async{
+    SharedPreferences sharedPreferences =
+    await SharedPreferences.getInstance();
+    String token = sharedPreferences.getString('first');
     print(token);
     return token;
   }
@@ -39,6 +57,8 @@ class Helps{
     isback?Route_all.push(context, Login(isback)): Route_all.pushAndRemove(context, Login(isback));
 
   }
+
+
 
   Widget footView(String loadMoreText,TextStyle loadMoreTextStyle) {
     return new Padding(

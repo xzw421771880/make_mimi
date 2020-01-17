@@ -121,7 +121,7 @@ class _InformationState extends State<Information> {
       idCard = '';
     }else{
       String str = widget.user['idCardNum'].toString();
-      idCard = str.substring(str.length - 1,str.length) +'******' + str.substring(str.length - 1,str.length);
+      idCard = str.substring(0,1) +'******' + str.substring(str.length - 1,str.length);
     }
 
     String phone = widget. user['mobile'].toString().substring(0,3)+"****"+widget. user['mobile'].toString().substring(7,11);
@@ -129,7 +129,7 @@ class _InformationState extends State<Information> {
     Map tb =  widget.user['taobao'];
 
     List titleList = ['姓名','身份证号','手机号','QQ号码','性别','年龄段','淘宝号会员名','淘宝号心级','淘宝号性别','收货人','收货地址'];
-    List detailList = [name,idCard,phone,widget.user['qq'],tb == null?'': tb['taobao_sex'],widget.user['ageBracket'],tb == null?'': tb['taobao_name'],tb == null?'': tb['taobao_level'],tb == null?'': tb['taobao_sex'],tb == null?'': tb['taobao_name'],tb == null?'': tb['province']+tb['city']+tb['district']+tb['detailed_address']];
+    List detailList = [name,idCard,phone,widget.user['qq'],widget.user['sex'],widget.user['ageBracket'],tb == null?'': tb['taobao_name'],tb == null?'': tb['taobao_level'],tb == null?'': tb['taobao_sex'],tb == null?'': tb['taobao_name'],tb == null?'': tb['province']+tb['city']+tb['district']+tb['detailed_address']];
 //    List detailList = [name,idCard,phone,widget.user['qq'],tb['taobao_sex'],phone,widget.user['ageBracket'],'d','d','打撒','订单','多订单','dddsss'];
 
     return Container(

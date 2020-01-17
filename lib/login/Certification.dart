@@ -8,9 +8,13 @@ import 'package:make_mimi/login/CertificationCase.dart';
 import 'package:make_mimi/utils/com_service.dart';
 import 'package:make_mimi/utils/showtoast_util.dart';
 
+typedef blockBack();
 
 class Certification extends StatefulWidget {
 
+  blockBack back;
+
+  Certification(this.back);
 
   @override
   _CertificationState createState() => _CertificationState();
@@ -420,8 +424,9 @@ class _CertificationState extends State<Certification> {
       print("提交成功");
       print(response);
       showToast('成功提交认证，请等待审核');
+      widget.back();
       Navigator.pop(context);
-      Navigator.pop(context);
+//      Navigator.pop(context);
     }, (fail) {
 
       print("失败");

@@ -208,12 +208,13 @@ class _TaskOrderState extends State<TaskOrder> {
                       bottom: 0,
                       child: Container(
                         alignment: Alignment.centerLeft,
-                        child: Text('${item['shop_name']}(${taskType[item['task_id']]}）'),
+                        child: Text(item['shop_name']),
+//                        child: Text('${item['shop_name']}(${taskType[item['task_id']]}）'),
                       ),
                     ),
                     Positioned(
                       right: 15,
-                      width: 150,
+                      width: 200,
                       top: 0,
                       bottom: 0,
                       child: Container(

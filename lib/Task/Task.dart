@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:make_mimi/Task/TaskDetail.dart';
 import 'package:make_mimi/config/router_utils.dart';
+import 'package:make_mimi/utils/Help.dart';
 import 'package:make_mimi/utils/XjSelete.dart';
 import 'package:make_mimi/utils/com_service.dart';
 
@@ -29,7 +30,19 @@ class _TaskState extends State<Task> {
   @override
   void initState() {
     super.initState();
-    getsquare();
+
+    Helps().getToken().then((token) {
+      print('first ====  ${token}');
+      if (token == null){
+        Helps().out(context, false);
+
+      }else{
+
+        getsquare();
+      }
+
+    });
+
   }
 
   getsquare() {
@@ -57,7 +70,7 @@ class _TaskState extends State<Task> {
   //下拉
   Future _pullToRefresh() async {
     print("111");
-//    currentPage = 1;
+    currentPage = 1;
 
     getsquare();
     return null;
@@ -128,6 +141,8 @@ class _TaskState extends State<Task> {
 
   Widget buildCell(int index){
     Map item = dataList[index];
+    print(index);
+    print(item);
     return GestureDetector(
       onTap: (){
         Route_all.push(context, TaskDetail(item['id'], (index){
@@ -146,7 +161,7 @@ class _TaskState extends State<Task> {
               top: 10,
               width: 80,
               height: 80,
-              child: Image.network('http://sd.zy.hzchongqv.cn/uploads/images/202001/5e0d9cc70e25b.jpg',fit: BoxFit.cover,),
+              child: Image.network(item['goods_pic'],fit: BoxFit.cover,),
             ),
             Positioned(
               left: 105,

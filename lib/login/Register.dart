@@ -502,7 +502,9 @@ class _RegisterState extends State<Register> {
       print(response);
       showToast('注册成功');
       Helps().saveToke(response['token']);
-      Route_all.push(context, Certification());
+      Route_all.push(context, Certification((){
+        Navigator.pop(context);
+      }));
 //      Navigator.pop(context);
     }, (fail) {
 

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -31,10 +32,52 @@ class _CompleteState extends State<Complete> {
   List requires = List();
   List requiresImage = List();
 
+  List progress = List();
+  int progressed = 0;
+
+  Timer timer;
+
+  int count = 60;
+  String butStr = '确认提交';
+  int status = 0;//0可以提交 1倒计时 2下一步
+
   @override
   void initState() {
     super.initState();
     getOrderInfo();
+  }
+
+
+  void _initTimer() {
+    count = int.parse(progress[progressed]['wait_second']) ;
+    timer = new Timer.periodic(Duration(seconds: 1), (Timer timer) {
+      count--;
+      setState(() {
+        if (count == 0) {
+          timer.cancel(); //倒计时结束取消定时器
+          progressed ++; //重置时间
+          if (progressed >= progress.length){
+            butStr = '确认提交';
+            status = 0;
+          }else{
+            status = 2;
+            butStr = '下一步';//更新文本内容
+          }
+           //重置按钮文本
+        } else {
+          status = 1;
+          butStr = '下一步（还剩${count}s）';
+        }
+      });
+    });
+  }
+
+  ///销毁计时器
+  @override
+  void dispose() {
+    timer?.cancel(); //销毁计时器
+    timer = null;
+    super.dispose();
   }
 
   getOrderInfo() {
@@ -46,6 +89,8 @@ class _CompleteState extends State<Complete> {
       orderInfo = response;
       orderMold = response['range']['order_mold'];
       requires = response['requires'];
+      print('requires');
+      print(requires);
 
       for(int i = 0;i<requires.length;i++){
         if (requires[i]['is_require_snapshot'] == '1'){
@@ -53,7 +98,16 @@ class _CompleteState extends State<Complete> {
           requiresImage.add(requires[i]);
           images.add(null);
         }
+
+        if (requires[i]['is_screen_wait'] == '1'){
+          print(requires[i]);
+          progress.add(requires[i]);
+        }
+
+
       }
+
+      _initTimer();
 
       setState(() {
         print("更新");
@@ -62,6 +116,46 @@ class _CompleteState extends State<Complete> {
     }, (fail) {
 
     });
+  }
+
+
+  warn(){
+    showDialog<Null>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return  AlertDialog(
+          title:  Text('警告'),
+          content:  SingleChildScrollView(
+            child:  ListBody(
+              children: <Widget>[
+                Text('退出任务将中断，是否确认退出', style: TextStyle(
+                  ///字体颜色
+                  color: Colors.red,
+                  ///字体的大小
+                  fontSize: 16,
+                )),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child:  Text('确定'),
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pop(context);
+              },
+            ),
+            FlatButton(
+              child:  Text('取消'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
 
@@ -79,7 +173,13 @@ class _CompleteState extends State<Complete> {
         leading: new IconButton(icon: Icon(Icons.arrow_back_ios),
             color: Color(0xff333333),
             onPressed: () {
-              Navigator.pop(context);
+
+              if(progress.length>0){
+                warn();
+              }else{
+                Navigator.pop(context);
+              }
+
             }),
         elevation: 0,
       ),
@@ -98,6 +198,10 @@ class _CompleteState extends State<Complete> {
                   orderInfo == null?Container():buildDetail(['${orderInfo['shop_name']}(${orderMold[orderInfo['task_mold']]})','任务编号：${orderInfo['id']}','本金：${orderInfo['goods_deal_price']}元','佣金：${orderInfo['task_commission']}元']),
 
                   buildTitle(1),
+                  buildProgress(),
+                  requiresImage.length == 0?Container():
+                  buildTitle(2),
+
 
                   Container(
                     height: 20,
@@ -113,15 +217,22 @@ class _CompleteState extends State<Complete> {
               height: 50,
               right: 15,
               child: MaterialButton(
-                color: Colors.blue,
+                color: status == 1?Colors.grey: Colors.blue,
                 textColor: Colors.white,
-                child: new Text('确认提交', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,),
+                child: new Text(butStr, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,),
 
                 ),
                 onPressed: () {
 
                   print('确认提交');
-                  imageAllUpdate();
+                  if (status == 0){
+                    imageAllUpdate();
+                  }
+
+                  if (status == 2){
+                    _initTimer();
+                  }
+
 //                  Route_all.push(context, Login());
                 },
               )
@@ -132,7 +243,7 @@ class _CompleteState extends State<Complete> {
   }
 
   Widget buildTitle(int index){
-    List titleList = ['任务信息','上传评价截图'];
+    List titleList = ['任务信息','完成进度','上传评价截图'];
 
     return Container(
       color: Color(0xffcccccc),
@@ -235,6 +346,72 @@ class _CompleteState extends State<Complete> {
               ),
             ),
           ),
+      );
+    }
+
+    return Container(
+      color: Colors.white,
+      child: Column(
+        children: list,
+      ),
+    );
+  }
+
+
+  Widget buildProgress(){
+
+    List <Padding> list = List();
+    for (int i = 0;i < progress.length;i++){
+//      print(requiresImage);
+      print(progress[i]);
+      list.add(
+        Padding(
+          padding: EdgeInsets.all(0),
+          child: Container(
+            height: 50,
+            child: Stack(
+              children: <Widget>[
+                Positioned(
+                  left: 15,
+                  top: 10,
+                  height: 30,
+                  width: 250,
+                  child: Container(
+                    alignment: Alignment.centerLeft,
+                    child:Text(progress[i]['task_require_name']+'（需等待' +progress[i]['wait_second']+'s）'+ (progressed >i ? '已完成':'未完成')),
+//                    Text('${progress[i]['task_require_name']}（截图）'),
+                  ),
+                ),
+//                Positioned(
+//                  left: 15,
+//                  top: 40,
+//                  height: 100,
+//                  width: 100,
+//                  child: GestureDetector(
+//                    onTap: (){
+//                      print('点击选择');
+//                      alert(i);
+//                    },
+//                    child:images[i] == null? Container(
+//                      color: Color(0xffaaaaaa),
+//                      alignment: Alignment.center,
+//                      child: Text('点击选择图片'),
+//                    ):Image.file(images[i],fit: BoxFit.cover,),
+//                  ),
+//                ),
+                Positioned(
+                  left: 15,
+                  right: 15,
+                  height: 1,
+                  bottom: 1,
+                  child: Container(
+                    color: Color(0xffcccccc),
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
       );
     }
 

@@ -1,4 +1,9 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:make_mimi/config/router_utils.dart';
 import 'package:make_mimi/home/money/TopupRecord.dart';
 import 'package:make_mimi/utils/RefundReason.dart';
@@ -15,37 +20,55 @@ class Topup extends StatefulWidget {
 
 class _TopupState extends State<Topup> {
 
-  String bank;
-  String realName;
-  String bankNum;
   String amount = '1000';
+  String content = '';
+  String pzStr;
 
   @override
   void initState() {
     super.initState();
-    getDetail();
+    getAmount();
+    getContent();
   }
 
-  getDetail() {
-//    print("getuser --------------");
-//    Map<String, dynamic> map = Map();
-//    map.putIfAbsent("prodId", () => widget.productId);
-//    Com_Service().get(map, "/prod/prodInfo", (response) {
-//      print("商品详情");
-//      print(response);
-//
-//      detailData = response;
-//      Map model = detailData['skuList'][0];
-//      sku = model['skuName'].toString().replaceAll(" ", ',');
-//      price = model['price'].toString();
-//      imageStr = model['pic'];
-//      setState(() {
-//        print("更新");
-//      });
-////      print(meModel.balanceUsdt);
-//    }, (fail) {
-//
-//    });
+  getAmount() {
+    print("getuser --------------");
+//    user_deposit
+//    recharge-account
+    Map<String, dynamic> map = Map();
+    map.putIfAbsent("key", () => 'user_deposit');
+    Com_Service().post(map, "/site/get-sys", (response) {
+      print("详情");
+      print(response);
+      amount = response['value'];
+
+      setState(() {
+        print("更新");
+      });
+//      print(meModel.balanceUsdt);
+    }, (fail) {
+
+    });
+  }
+
+  getContent() {
+    print("getuser --------------");
+//    user_deposit
+//    recharge-account
+    Map<String, dynamic> map = Map();
+    map.putIfAbsent("key", () => 'recharge-account');
+    Com_Service().post(map, "/site/get-sys", (response) {
+      print("详情");
+      print(response);
+      content = response['value'];
+
+      setState(() {
+        print("更新");
+      });
+//      print(meModel.balanceUsdt);
+    }, (fail) {
+
+    });
   }
 
 
@@ -93,15 +116,12 @@ class _TopupState extends State<Topup> {
                 children: <Widget>[
                   buildWarn('请先手动通过 网银/手机银行 转账到平台指定收款账号,再如实按照转账金额提交充值申请.没有转账就提交充值申请，就视为恶意提交'),
                   buildTitle(0),
-                  buildMessage(0),
-                  buildMessage(1),
-                  buildMessage(2),
-                  buildMessage(3),
+                  Html(data: content),
                   buildTitle(1),
-                  buildText(0),
-                  buildSel(),
-                  buildText(1),
-                  buildMessage(4),
+
+                  buildMessage(0),
+                  buildTitle(2),
+                  buildImage(),
                   buildWarn('每次最低转账充值1000元，充值一次提交一次，恶意提交将处罚或封号\n审核时间：早上9点到晚上8点\n大额转账：17:50分过后的请不要一笔超过50000以上的充值，银行原因可能会导致无法实时到账'),
                 ],
               )
@@ -131,7 +151,7 @@ class _TopupState extends State<Topup> {
   }
 
   Widget buildTitle(int index){
-    List titleList = ['平台收款账号','提交转账信息'];
+    List titleList = ['平台收款账号','提交转账信息','上传凭证'];
 
     return Container(
       color: Color(0xffcccccc),
@@ -156,7 +176,7 @@ class _TopupState extends State<Topup> {
 
   Widget buildMessage(int index){
 
-    List list = ['转账途径：网银、手机银行(禁止使用支付宝、微信转账）','收款户名： 张三','收款账号： 1251235123565236','收款银行： 建设银行','转账金额（元）：1000元'];
+    List list = ['转账金额（元）：${amount}元'];
 
     return Container(
       height: 50,
@@ -187,63 +207,44 @@ class _TopupState extends State<Topup> {
     );
   }
 
+  Widget buildImage(){
 
-  Widget buildText(int index){
-
-    List titleList = ['转出银行卡姓名','转出银行卡卡号'];
-    List hintList = ['请输入转出银行卡姓名','请输入银行卡卡号'];
-    List<TextInputType> input = [TextInputType.text,TextInputType.phone];
+    Image image = pzStr == null? Image(image: AssetImage('images/login/register_certi_add.png')):Image.network(pzStr,fit: BoxFit.cover,);
 
 
     return Container(
-      height: 50,
-      color: Colors.white,
+      height: 250,
       child: Stack(
         children: <Widget>[
           Positioned(
-            left: 15,
-            width: 100,
-            top: 0,
-            bottom: 0,
-            child: Container(
-              alignment: Alignment.centerLeft,
-              child: Text(titleList[index]),
-            ),
-          ),
-          Positioned(
-            left: 120,
-            right: 15,
-            top: 0,
-            bottom: 0,
-            child: TextField(
-//              style: TextStyle(textBaseline: TextBaseline.alphabetic),
-              cursorColor: Colors.grey,
-              keyboardType: input[index],
-              decoration:  new InputDecoration(
-                hintText: hintList[index],
-                contentPadding: EdgeInsets.only(top: 14,bottom: 0),
-                border: InputBorder.none,
-                hintStyle: TextStyle(
-                  fontSize: 14,
+            left: 20,
+            right: 20,
+            top: 10,
+            bottom: 10,
+            child: GestureDetector(
+              onTap: (){
+                alert();
+              },
+              child: Container(
+                color: Colors.white,
+                child: Stack(
+                  children: <Widget>[
+                    Positioned(
+                      left: (MediaQuery.of(context).size.width - 120)/2,
+                      top: 50,
+                      width: 80,
+                      height: 80,
+                      child: image,
+                    ),
+                    Positioned(
+                      left: 0,
+                      bottom: 30,
+                      right: 0,
+                      child: Text('请上传凭证',textAlign: TextAlign.center,style: TextStyle(fontSize: 17,color:Colors.grey),),
+                    )
+                  ],
                 ),
               ),
-              onChanged: (value){
-
-                if(index == 0){
-                  realName = value;
-                }else{
-                  bankNum = value;
-                }
-              },
-            ),
-          ),
-          Positioned(
-            right: 5,
-            left: 5,
-            bottom: 1,
-            height: .5,
-            child: Container(
-              color: Color(0xffcccccc),
             ),
           )
         ],
@@ -251,73 +252,91 @@ class _TopupState extends State<Topup> {
     );
   }
 
+  alert(){
+    print("666");
 
-  Widget buildSel(){
+    showDialog<Null>(
+      context: context,
+      builder: (BuildContext context) {
+        return new SimpleDialog(
+          title: new Text('选择图片',textAlign: TextAlign.center,style: TextStyle(
 
-    return GestureDetector(
-      onTap: (){
+              fontSize: 19
+          ),),
+          children: <Widget>[
+            new SimpleDialogOption(
+              child: new Text('相机',textAlign: TextAlign.center,style: TextStyle(
 
-        print('xz');
-        showDialog(
-            context: context,
-            builder: (BuildContext context){
-              return RefundReason(['工商银行','建设银行','中国银行','农业银行'],(resonBack){
+                fontSize: 17,
+              ),),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _getImageFromCamera();
+              },
+            ),
+            new SimpleDialogOption(
+              child: new Text('相册',textAlign: TextAlign.center,style: TextStyle(
 
-                bank = resonBack;
-                setState(() {
-
-                });
-              });
-            }
+                  fontSize: 17
+              ),),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _getImageFromGallery();
+              },
+            ),
+          ],
         );
       },
-      child: Container(
-
-        height: 50,
-        color: Colors.white,
-        child: Stack(
-          children: <Widget>[
-            Positioned(
-              left: 15,
-              top: 0,
-              bottom: 0,
-              width: 150,
-              child: Container(
-                alignment: Alignment.centerLeft,
-                child: Text('转出银行卡'),
-              ),
-            ),
-            Positioned(
-              left: 120,
-              right: 15,
-              top: 0,
-              bottom: 0,
-              child: Container(
-                alignment: Alignment.centerLeft,
-                child: Text(bank == null? '请选择':bank),
-              ),
-            ),
-            Positioned(
-              right: 20,
-              top: 20,
-              bottom: 20,
-              width: 10,
-              child: Image(image: AssetImage('images/home/home_right.png'),),
-            ),
-            Positioned(
-              right: 5,
-              left: 5,
-              bottom: 1,
-              height: .5,
-              child: Container(
-                color: Color(0xffcccccc),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
+    ).then((val) {
+      print(val);
+    });
   }
+
+  //拍照
+  Future _getImageFromCamera() async {
+    var image =
+    await ImagePicker.pickImage(source: ImageSource.camera, maxWidth: 400);
+
+    setState(() {
+      _uploadImage(image);
+    });
+  }
+
+  //相册选择
+  Future _getImageFromGallery() async {
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      _uploadImage(image);
+    });
+  }
+
+  //上传图片到服务器
+  _uploadImage(File file) async {
+
+    String path = file.path;
+    var name1 = path.substring(path.lastIndexOf("/") + 1, path.length);
+    FormData formData = FormData.fromMap({
+      //"": "", //这里写其他需要传递的参数
+//      "file": zmImage,_
+      "file": await MultipartFile.fromFile(path,filename: name1),
+    });
+
+    Com_Service().POSTIMAGE(formData, "/site/upload-image", (response){
+
+      print(response);
+      pzStr = response['url'];
+
+      setState(() {
+
+      });
+
+    }, (fail){
+
+    });
+  }
+
+
 
   Widget buildWarn(String title){
 
@@ -337,23 +356,6 @@ class _TopupState extends State<Topup> {
   commit(){
 
 
-    if (realName == null){
-      showToast('请输入真实姓名');
-      return;
-    }
-
-
-    if (bank == null){
-      showToast('请选择银行');
-      return;
-    }
-
-
-    if (bankNum == null){
-
-      showToast('请输入银行账号');
-      return;
-    }
 
 
 
@@ -363,16 +365,20 @@ class _TopupState extends State<Topup> {
       return;
     }
 
+    if (pzStr == null){
+
+      showToast('请上传凭证');
+      return;
+    }
+
 
 
     Map<String, dynamic> map = Map();
 
     print('3333');
-    map.putIfAbsent("bank", () => bank);
-    map.putIfAbsent("realName", () => realName);
-    map.putIfAbsent("bankNum", () => bankNum);
+
     map.putIfAbsent("amount", () => amount);
-    map.putIfAbsent("proof", () => '111');
+    map.putIfAbsent("proof", () => pzStr);
 
     print(map);
 

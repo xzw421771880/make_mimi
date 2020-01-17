@@ -7,6 +7,8 @@ PODS:
     - JPush
   - fluttertoast (0.0.2):
     - Flutter
+  - image_gallery_saver (0.0.1):
+    - Flutter
   - image_picker (0.0.1):
     - Flutter
   - JCore (2.1.2)
@@ -17,9 +19,10 @@ PODS:
 
 DEPENDENCIES:
   - city_pickers (from `.symlinks/plugins/city_pickers/ios`)
-  - Flutter (from `.symlinks/flutter/ios`)
+  - Flutter (from `.symlinks/flutter/ios-release`)
   - flutter_jpush (from `.symlinks/plugins/flutter_jpush/ios`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
+  - image_gallery_saver (from `.symlinks/plugins/image_gallery_saver/ios`)
   - image_picker (from `.symlinks/plugins/image_picker/ios`)
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
 
@@ -32,11 +35,13 @@ EXTERNAL SOURCES:
   city_pickers:
     :path: ".symlinks/plugins/city_pickers/ios"
   Flutter:
-    :path: ".symlinks/flutter/ios"
+    :path: ".symlinks/flutter/ios-release"
   flutter_jpush:
     :path: ".symlinks/plugins/flutter_jpush/ios"
   fluttertoast:
     :path: ".symlinks/plugins/fluttertoast/ios"
+  image_gallery_saver:
+    :path: ".symlinks/plugins/image_gallery_saver/ios"
   image_picker:
     :path: ".symlinks/plugins/image_picker/ios"
   shared_preferences:
@@ -47,6 +52,7 @@ SPEC CHECKSUMS:
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
   flutter_jpush: bb278c661136b2a2032e96ffc15bbce871d3fb02
   fluttertoast: b644586ef3b16f67fae9a1f8754cef6b2d6b634b
+  image_gallery_saver: 73b3cd8ad9c950c739878af9c311744d1bf5405d
   image_picker: e3eacd46b94694dde7cf2705955cece853aa1a8f
   JCore: 1a426120b510cdebfd67b82bfb9483238ee09413
   JPush: 29466e5f30dbd703f640d70540e411e829cac1fa

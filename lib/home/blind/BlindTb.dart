@@ -49,8 +49,8 @@ class _BlindTbState extends State<BlindTb> {
     super.initState();
     tb_name = widget.data['taobao_name'] == null?'':widget.data['taobao_name'];
     tb_level = widget.data['taobao_level'] == null?'1':widget.data['taobao_level'].toString();
-    tb_type = widget.data['level_type'] == null?'心':['心','蓝钻','蓝冠','金冠'][int.parse(widget.data['level_type'])];
-
+    tb_type = widget.data['level_type'] == null?'心':['心','黄钻','黄冠','金冠'][int.parse(widget.data['level_type']) -1];
+//
     tb_sex = widget.data['taobao_sex'] == null?'':widget.data['taobao_sex'];
     consignee = widget.data['consignee'] == null?'':widget.data['consignee'];
     consignee_num = widget.data['consignee_num'] == null?'':widget.data['consignee_num'];
@@ -117,7 +117,7 @@ class _BlindTbState extends State<BlindTb> {
                   buildImages(2),
                 ],
               )
-          ),
+          ),widget. data['status'] == '0'||widget. data['status'] == '1'?Container():
           Positioned(
               left: 15,
               bottom: MediaQuery.of(context).padding.bottom,
@@ -191,23 +191,9 @@ class _BlindTbState extends State<BlindTb> {
           showDialog(
               context: context,
               builder: (BuildContext context){
-                return RefundReason(['心','蓝钻','蓝冠','金冠'],(resonBack){
+                return RefundReason(['心','黄钻','黄冠','金冠'],(resonBack){
 
                   tb_type = resonBack;
-                  setState(() {
-
-                  });
-                });
-              }
-          );
-        }
-        if(index == 2){
-          showDialog(
-              context: context,
-              builder: (BuildContext context){
-                return RefundReason(['男','女'],(resonBack){
-
-                  tb_sex = resonBack;
                   setState(() {
 
                   });
@@ -628,7 +614,7 @@ class _BlindTbState extends State<BlindTb> {
 
       print("登录成功");
       print(response);
-      showToast('绑定成功');
+      showToast('提交成功,审核中');
       Navigator.pop(context);
     }, (fail) {
       print("失败");

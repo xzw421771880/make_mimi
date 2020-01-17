@@ -25,7 +25,7 @@ class Com_Service {
       } else if(response['code'] == 4032||response['code'] == 4031){
 
 
-        showToast("账号失效");
+        showToast("未登录");
         outEvent.fire('token失效');
       }else{
         showToast(response['message']);
@@ -48,7 +48,7 @@ class Com_Service {
         success(response["data"]);
       } else if(response['code'] == 4032||response['code'] == 4031){
 
-        showToast("账号失效");
+        showToast("未登录");
         if(url == '/user/info'){
           outEvent.fire('token失效');
         }

@@ -3,6 +3,7 @@ import 'package:make_mimi/config/router_utils.dart';
 import 'package:make_mimi/home/Order/OperationOrder.dart';
 import 'package:make_mimi/home/Order/OrderDetail.dart';
 import 'package:make_mimi/utils/Help.dart';
+import 'package:make_mimi/utils/MeColor.dart';
 import 'package:make_mimi/utils/com_service.dart';
 import 'package:make_mimi/utils/showtoast_util.dart';
 
@@ -24,6 +25,7 @@ class _TaskDetailState extends State<TaskDetail> {
   Map orderMold = Map();
   List orderList = List();
   Map orderStatus = Map();
+  List requires = List();
 
   @override
   void initState() {
@@ -49,6 +51,7 @@ class _TaskDetailState extends State<TaskDetail> {
       orderMold = response['range']['order_mold'];
       orderStatus = response['range']['task_order_status'];
       print(response['range']);
+      requires = response['requires'];
 
       setState(() {
         print("更新");
@@ -80,12 +83,12 @@ class _TaskDetailState extends State<TaskDetail> {
         elevation: 0,
       ),
       body: ListView.builder(
-          itemCount: orderList.length +5+1,
+          itemCount: orderList.length +4+1,
           itemBuilder:(BuildContext context,int index){
-            if (index == 5){
+            if (index == 4){
               return buildRequird();
-            }else if(index >5){
-              return buildOrder(index - 6);
+            }else if(index >4){
+              return buildOrder(index - 5);
             } else{
               return buildCell(context,index);
             }
@@ -100,8 +103,8 @@ class _TaskDetailState extends State<TaskDetail> {
 
 //    String title = data[index];
 
-    List titleList = ['店铺名称','任务类型','垫付金额','任务佣金','允许使用花呗'];
-    List detailList = [taskInfo == null?'***':taskInfo['shop_name'],taskInfo == null?'***':taskInfo['type_name'],taskInfo == null?'***':'￥${taskInfo['find_pay_conut']}',taskInfo == null?'***':'￥${taskInfo['goods_show_price']}','允许使用信用卡'];
+    List titleList = ['店铺名称','任务类型','垫付金额','任务佣金'];
+    List detailList = [taskInfo == null?'***':taskInfo['shop_name'],taskInfo == null?'***':taskInfo['type_name'],taskInfo == null?'***':'￥${taskInfo['find_pay_conut']}',taskInfo == null?'***':'￥${taskInfo['goods_show_price']}'];
 
 
 
@@ -147,27 +150,39 @@ class _TaskDetailState extends State<TaskDetail> {
 
   Widget buildRequird(){
 
+
+
+
+    List <Padding> padList = [];
+    padList.add(Padding(
+      padding: EdgeInsets.only(left: 15,top: 15,bottom: 5),
+      child: Container(
+        alignment: Alignment.centerLeft,
+        child: Text('商家要求'),
+      ),
+    ));
+    for (int i = 0;i<requires.length;i++){
+      padList.add(
+          Padding(
+            padding: EdgeInsets.only(left: 15),
+            child: Container(
+              alignment: Alignment.centerLeft,
+              height: 40,
+              color: Colors.white,
+              child: Text('${requires[i]['task_require_name']}${requires[i]['item_order_require'] == null?'':'（${requires[i]['item_order_require']}）'}'),
+            ),
+          )
+      );
+    }
+
     return Container(
 
       child: Column(
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.only(left: 15,top: 15,bottom: 5),
-            child: Container(
-              alignment: Alignment.centerLeft,
-              child: Text('商家要求'),
-            ),
-          ),
-          Padding(
-              padding: EdgeInsets.only(left: 15,top: 15,bottom: 5),
-              child: Container(
-                alignment: Alignment.centerLeft,
-                child: Text('1.必须按照关键词搜索\n1.必须按照关键词搜索'),
-              )
-          ),
-        ],
+        children: padList,
       ),
     );
+
+
   }
 
   Widget buildOrder(int index){
@@ -272,9 +287,9 @@ class _TaskDetailState extends State<TaskDetail> {
             bottom: 10,
             width: 60,
             child: MaterialButton(
-              color: Color(0xffcccccc),
+              color: MEColor.home,
               padding: EdgeInsets.all(0),
-              child: Text(butStr),
+              child: Text(butStr,style: TextStyle(color: Colors.white),),
               onPressed: (){
 
                 if(isSelete){

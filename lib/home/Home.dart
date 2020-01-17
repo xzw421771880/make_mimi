@@ -16,6 +16,8 @@ import 'package:make_mimi/home/blind/Blind.dart';
 import 'package:make_mimi/home/money/Draw.dart';
 import 'package:make_mimi/home/money/Topup.dart';
 import 'package:make_mimi/home/set/Setup.dart';
+import 'package:make_mimi/login/Certification.dart';
+import 'package:make_mimi/utils/AlertGo.dart';
 import 'package:make_mimi/utils/Help.dart';
 import 'package:make_mimi/utils/OutEvent.dart';
 import 'package:make_mimi/utils/com_service.dart';
@@ -32,12 +34,53 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     _initJPush();
-    getInfo();
+
+    Helps().getToken().then((token) {
+      print('first ====  ${token}');
+      if (token == null){
+        Helps().out(context, false);
+
+      }else{
+
+        getInfo();
+      }
+
+    });
+
 
     outEvent.on().listen((value){
-      Helps().out(context, true);
+      Helps().out(context, false);
+    });
+
+
+
+
+  }
+
+  isFirst(){
+    Helps().getFirst().then((first) {
+      print('first ====  ${first}');
+      if (first == null){
+        alertFirst();
+        Helps().saveFirst('111');
+      }else{
+
+      }
+
     });
   }
+
+  alertFirst(){
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context){
+          return AlertGo();
+        }
+    );
+  }
+
+
   void _initJPush() async {
     await FlutterJPush.startup();
     print("初始化jpush成功");
@@ -86,6 +129,9 @@ class _HomeState extends State<Home> {
       print(response);
 
       user = response;
+      isFirst();
+
+
       setState(() {
         print("更新");
       });
@@ -171,6 +217,7 @@ class _HomeState extends State<Home> {
                       onTap: (){
                         print('通知');
                         Route_all.push(context, Notices());
+
                       },
                       child: Image(image: AssetImage('images/home/home_notice.png'),),
                     ),
@@ -202,7 +249,15 @@ class _HomeState extends State<Home> {
                 if(user == null){
                   print('请登录');
                 }else{
-                  Route_all.push(context, Information(user));
+                  if(user['realName'] != null){
+//                    name = user['realName'];
+                    Route_all.push(context, Information(user));
+                  }else{
+                    Route_all.push(context, Certification((){
+                      _pullToRefresh();
+                    }));
+                  }
+
                 }
 
               },
