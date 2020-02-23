@@ -48,7 +48,7 @@ class _CommissionRecordState extends State<CommissionRecord> {
         appBar: AppBar(
 //        textTheme: TextTheme(subtitle: "充币"),
           backgroundColor: Colors.white,
-          title: Text('佣金记录', style: TextStyle(fontSize: 15,
+          title: Text('资产明细', style: TextStyle(fontSize: 15,
             fontWeight: FontWeight.bold,
             color: Color(0xff333333),),),
           leading: new IconButton(icon: Icon(Icons.arrow_back_ios),
@@ -73,7 +73,7 @@ class _CommissionRecordState extends State<CommissionRecord> {
 
     List<String> listStr =[];
     if (index == 0){
-      listStr = ['来源账号','类别','金额','日期'];
+      listStr = ['订单号','类别','金额','日期'];
     }else{
       listStr = ['18888888','一级分佣','8.88','2019-10-10 10:10'];
     }

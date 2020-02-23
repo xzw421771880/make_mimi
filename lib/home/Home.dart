@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_jpush/flutter_jpush.dart';
 import 'package:make_mimi/Task/TaskDetail.dart';
 import 'package:make_mimi/config/router_utils.dart';
+import 'package:make_mimi/home/Complain/CommissionRecord.dart';
 import 'package:make_mimi/home/Complain/ComplainCenter.dart';
 import 'package:make_mimi/home/HelpCenter.dart';
 import 'package:make_mimi/home/Information.dart';
@@ -164,6 +165,7 @@ class _HomeState extends State<Home> {
             buildInfo(),
             buildTitle(),
             Container(height: 5,),
+            buildMoney(),
             buildNumber(),
             Container(height: 5,),
             buildTask(),
@@ -361,6 +363,50 @@ class _HomeState extends State<Home> {
 //      color: Colors.red,
       child: Stack(
         children:pList,
+      ),
+    );
+  }
+
+  Widget buildMoney(){
+    return GestureDetector(
+      onTap: (){
+        print('我的资产');
+        Route_all.push(context, CommissionRecord());
+      },
+      child: Container(
+        color: Colors.white,
+        height: 50,
+        child: Stack(
+          children: <Widget>[
+            Positioned(
+              left: 15,
+              top: 0,
+              bottom: 0,
+              width: 150,
+              child: Container(
+                alignment: Alignment.centerLeft,
+                child: Text('我的资产',style: TextStyle(fontSize: 16),),
+              ),
+            ),
+            Positioned(
+              right: 50,
+              top: 0,
+              bottom: 0,
+              width: 150,
+              child: Container(
+                alignment: Alignment.centerRight,
+                child: Text('资产明细',style: TextStyle(fontSize: 14,color: Color(0xff444444)),),
+              ),
+            ),
+            Positioned(
+              right: 20,
+              top: 17.5,
+              width: 15,
+              height: 15,
+              child: Image(image: AssetImage('images/home/home_right.png'),),
+            )
+          ],
+        ),
       ),
     );
   }
