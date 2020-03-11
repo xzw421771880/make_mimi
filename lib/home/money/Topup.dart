@@ -116,7 +116,7 @@ class _TopupState extends State<Topup> {
                 children: <Widget>[
                   buildWarn('请先手动通过 网银/手机银行 转账到平台指定收款账号,再如实按照转账金额提交充值申请.没有转账就提交充值申请，就视为恶意提交'),
                   buildTitle(0),
-                  Html(data: content),
+                  Html(padding: EdgeInsets.only(left: 15,top: 10,right: 15), data: content),
                   buildTitle(1),
 
                   buildMessage(0),

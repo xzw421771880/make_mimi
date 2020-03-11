@@ -287,7 +287,7 @@ class _TaskOrderState extends State<TaskOrder> {
                       bottom: 10,
                       child: MaterialButton(
                         padding: EdgeInsets.all(0),
-                        color: Colors.grey,
+                        color: Colors.blue,
                         child: Text('确认并完成订单',style: TextStyle(color: Colors.white),),
                         onPressed: (){
 

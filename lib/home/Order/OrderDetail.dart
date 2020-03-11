@@ -280,7 +280,7 @@ class _OrderDetailState extends State<OrderDetail> {
     String sort = sorts[orderInfo['find_sort']];
 
     List<Padding> padList = List();
-    List titleList = ['定位排序：${sort}','定位付款数量：${orderInfo['find_pay_conut']}','定位价格区间：${orderInfo['find_price_min']} - ${orderInfo['find_price_max']}','定位发货区域：${orderInfo['find_send_area']}'];
+    List titleList = ['搜索关键字：${orderInfo['order_keyword']}','定位排序：${sort}','定位付款数量：${orderInfo['find_pay_conut']}','定位价格区间：${orderInfo['find_price_min']} - ${orderInfo['find_price_max']}','定位发货区域：${orderInfo['find_send_area']}'];
 
     for(int i = 0;i<titleList.length;i++){
       padList.add(Padding(
