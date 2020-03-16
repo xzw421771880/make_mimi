@@ -6,6 +6,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:make_mimi/config/router_utils.dart';
 import 'package:make_mimi/home/money/TopupRecord.dart';
+import 'package:make_mimi/utils/Help.dart';
 import 'package:make_mimi/utils/RefundReason.dart';
 import 'package:make_mimi/utils/com_service.dart';
 import 'package:make_mimi/utils/showtoast_util.dart';
@@ -91,18 +92,18 @@ class _TopupState extends State<Topup> {
               Navigator.pop(context);
             }),
         elevation: 0,
-          actions: <Widget>[
-            MaterialButton(
-
-              child: Text('充值记录', style: TextStyle(color: Color(0xff333333),),),
-              onPressed: (){
-                print("111");
-                Route_all.push(context, TopupRecord());
-
-              },
-            )
-
-          ]
+//          actions: <Widget>[
+//            MaterialButton(
+//
+//              child: Text('充值记录', style: TextStyle(color: Color(0xff333333),),),
+//              onPressed: (){
+//                print("111");
+//                Route_all.push(context, TopupRecord());
+//
+//              },
+//            )
+//
+//          ]
       ),
       body: Stack(
         children: <Widget>[
@@ -154,7 +155,7 @@ class _TopupState extends State<Topup> {
     List titleList = ['平台收款账号','提交转账信息','上传凭证'];
 
     return Container(
-      color: Color(0xffcccccc),
+      color: Helps().home,
       height: 40,
       child: Stack(
         children: <Widget>[

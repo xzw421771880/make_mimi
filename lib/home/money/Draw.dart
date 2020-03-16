@@ -4,17 +4,24 @@ import 'package:flutter/material.dart';
 import 'package:make_mimi/config/router_utils.dart';
 import 'package:make_mimi/home/money/DrawRecord.dart';
 import 'package:make_mimi/home/money/TopupRecord.dart';
+import 'package:make_mimi/utils/Help.dart';
 import 'package:make_mimi/utils/RefundReason.dart';
 import 'package:make_mimi/utils/com_service.dart';
 import 'package:make_mimi/utils/showtoast_util.dart';
 
 
+typedef Back();
 class Draw extends StatefulWidget {
+
+  Back back;
+//  Draw(this.back);
 
   String type;
   String money;
+  String bank;
+  String bankNum;
 
-  Draw(this.type,this.money);
+  Draw(this.type,this.money,this.bank,this.bankNum,this.back);
 
   @override
   _DrawState createState() => _DrawState();
@@ -22,7 +29,7 @@ class Draw extends StatefulWidget {
 
 class _DrawState extends State<Draw> {
 
-  String bank;
+//  String bank;
   String realName;
   String bankNum;
   String rebankNum;
@@ -55,18 +62,18 @@ class _DrawState extends State<Draw> {
                 Navigator.pop(context);
               }),
           elevation: 0,
-          actions: <Widget>[
-            MaterialButton(
-
-              child: Text('提现记录', style: TextStyle(color: Color(0xff333333),),),
-              onPressed: (){
-                print("111");
-                Route_all.push(context, DrawRecord(widget.type));
-
-              },
-            )
-
-          ]
+//          actions: <Widget>[
+//            MaterialButton(
+//
+//              child: Text('提现记录', style: TextStyle(color: Color(0xff333333),),),
+//              onPressed: (){
+//                print("111");
+//                Route_all.push(context, DrawRecord(widget.type));
+//
+//              },
+//            )
+//
+//          ]
       ),
       body: Stack(
         children: <Widget>[
@@ -78,15 +85,18 @@ class _DrawState extends State<Draw> {
               child:ListView(
 
                 children: <Widget>[
-                  buildWarn('请先手动通过 网银/手机银行 转账到平台指定收款账号,再如实按照转账金额提交充值申请.没有转账就提交充值申请，就视为恶意提交'),
-                  buildTitle(0),
-                  buildSel(),
-                  buildText(0),
-                  buildText(1),
-                  buildText(2),
+                  buildWarn('请注意：为保证资金安全，提现信息必须实名认证一样，绑定后提现开户人将永久无法修改'),
+//                  buildTitle(0),
+//                  buildSel(),
+//                  buildText(0),
+//                  buildText(1),
+//                  buildText(2),
 
                   buildTitle(1),
-                  buildMessage(),
+                  buildMessage(0),
+                  buildMessage(1),
+                  buildMessage(2),
+
                   buildText(3),
                   buildWarn('审核时间：24小时内处理，请耐心等待'),
                 ],
@@ -122,7 +132,7 @@ class _DrawState extends State<Draw> {
     List titleList = ['每个账户绑定','提现信息'];
 
     return Container(
-      color: Color(0xffcccccc),
+      color: Helps().home,
       height: 40,
       child: Stack(
         children: <Widget>[
@@ -142,8 +152,11 @@ class _DrawState extends State<Draw> {
     );
   }
 
-  Widget buildMessage(){
+  Widget buildMessage(int index){
 
+    List list = ['银行名称：'+widget.bank,'银行账号：'+widget.bankNum,'可提现金额（元）：${widget.money}元'];
+
+//    '银行名称'+
     return Container(
       height: 50,
       color: Colors.white,
@@ -156,7 +169,7 @@ class _DrawState extends State<Draw> {
             bottom: 0,
             child: Container(
               alignment: Alignment.centerLeft,
-              child: Text('可提现金额（元）：${widget.money}元'),
+              child: Text(list[index]),
             ),
           ),
           Positioned(
@@ -255,72 +268,72 @@ class _DrawState extends State<Draw> {
   }
 
 
-  Widget buildSel(){
-
-    return GestureDetector(
-      onTap: (){
-
-        print('xz');
-        showDialog(
-            context: context,
-            builder: (BuildContext context){
-              return RefundReason(['工商银行','建设银行','中国银行','农业银行'],(resonBack){
-
-                bank = resonBack;
-                setState(() {
-
-                });
-              });
-            }
-        );
-      },
-      child: Container(
-
-        height: 50,
-        color: Colors.white,
-        child: Stack(
-          children: <Widget>[
-            Positioned(
-              left: 15,
-              top: 0,
-              bottom: 0,
-              width: 150,
-              child: Container(
-                alignment: Alignment.centerLeft,
-                child: Text('提现银行'),
-              ),
-            ),
-            Positioned(
-              left: 120,
-              right: 15,
-              top: 0,
-              bottom: 0,
-              child: Container(
-                alignment: Alignment.centerLeft,
-                child: Text(bank == null? '请选择':bank),
-              ),
-            ),
-            Positioned(
-              right: 20,
-              top: 20,
-              bottom: 20,
-              width: 10,
-              child: Image(image: AssetImage('images/home/home_right.png'),),
-            ),
-            Positioned(
-              right: 5,
-              left: 5,
-              bottom: 1,
-              height: .5,
-              child: Container(
-                color: Color(0xffcccccc),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
+//  Widget buildSel(){
+//
+//    return GestureDetector(
+//      onTap: (){
+//
+//        print('xz');
+//        showDialog(
+//            context: context,
+//            builder: (BuildContext context){
+//              return RefundReason(['工商银行','建设银行','中国银行','农业银行'],(resonBack){
+//
+//                bank = resonBack;
+//                setState(() {
+//
+//                });
+//              });
+//            }
+//        );
+//      },
+//      child: Container(
+//
+//        height: 50,
+//        color: Colors.white,
+//        child: Stack(
+//          children: <Widget>[
+//            Positioned(
+//              left: 15,
+//              top: 0,
+//              bottom: 0,
+//              width: 150,
+//              child: Container(
+//                alignment: Alignment.centerLeft,
+//                child: Text('提现银行'),
+//              ),
+//            ),
+//            Positioned(
+//              left: 120,
+//              right: 15,
+//              top: 0,
+//              bottom: 0,
+//              child: Container(
+//                alignment: Alignment.centerLeft,
+//                child: Text(bank == null? '请选择':bank),
+//              ),
+//            ),
+//            Positioned(
+//              right: 20,
+//              top: 20,
+//              bottom: 20,
+//              width: 10,
+//              child: Image(image: AssetImage('images/home/home_right.png'),),
+//            ),
+//            Positioned(
+//              right: 5,
+//              left: 5,
+//              bottom: 1,
+//              height: .5,
+//              child: Container(
+//                color: Color(0xffcccccc),
+//              ),
+//            )
+//          ],
+//        ),
+//      ),
+//    );
+//  }
 
   Widget buildWarn(String title){
 
@@ -344,33 +357,33 @@ class _DrawState extends State<Draw> {
 
 
 
-    if (bank == null){
-      showToast('请选择银行');
-      return;
-    }
+//    if (bank == null){
+//      showToast('请选择银行');
+//      return;
+//    }
 
-    if (realName == null){
-      showToast('请输入真实姓名');
-      return;
-    }
-
-    if (bankNum == null){
-
-      showToast('请输入银行账号');
-      return;
-    }
-
-    if (rebankNum == null){
-
-      showToast('请确认银行账号');
-      return;
-    }
-
-    if (bankNum != rebankNum){
-
-      showToast('两次银行账号输入不一致');
-      return;
-    }
+//    if (realName == null){
+//      showToast('请输入真实姓名');
+//      return;
+//    }
+//
+//    if (bankNum == null){
+//
+//      showToast('请输入银行账号');
+//      return;
+//    }
+//
+//    if (rebankNum == null){
+//
+//      showToast('请确认银行账号');
+//      return;
+//    }
+//
+//    if (bankNum != rebankNum){
+//
+//      showToast('两次银行账号输入不一致');
+//      return;
+//    }
 
     if (amount == null){
 
@@ -383,9 +396,9 @@ class _DrawState extends State<Draw> {
     Map<String, dynamic> map = Map();
 
     print('3333');
-    map.putIfAbsent("bank", () => bank);
-    map.putIfAbsent("realName", () => realName);
-    map.putIfAbsent("bankNum", () => bankNum);
+//    map.putIfAbsent("bank", () => bank);
+//    map.putIfAbsent("realName", () => realName);
+//    map.putIfAbsent("bankNum", () => bankNum);
     map.putIfAbsent("amount", () => amount);
     map.putIfAbsent("type", () => widget.type);
 
@@ -396,6 +409,7 @@ class _DrawState extends State<Draw> {
       print("提现成功");
       print(response);
       showToast('提交成功');
+      widget.back();
       Navigator.pop(context);
     }, (fail) {
       print("失败");

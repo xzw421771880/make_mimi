@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:make_mimi/utils/Help.dart';
 
 
 class OperationOrder extends StatefulWidget {
@@ -334,7 +335,7 @@ class _OperationOrderState extends State<OperationOrder> {
     List titleList = ['任务要点','注意事项','任务步骤'];
 
     return Container(
-      color: Color(0xffcccccc),
+      color: Helps().home,
       height: 40,
       child: Stack(
         children: <Widget>[

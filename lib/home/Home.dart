@@ -14,6 +14,7 @@ import 'package:make_mimi/home/Order/OrderDetail.dart';
 import 'package:make_mimi/home/Order/ReciverOrder.dart';
 import 'package:make_mimi/home/Order/TaskOrder.dart';
 import 'package:make_mimi/home/blind/Blind.dart';
+import 'package:make_mimi/home/money/BlindBank.dart';
 import 'package:make_mimi/home/money/Draw.dart';
 import 'package:make_mimi/home/money/Topup.dart';
 import 'package:make_mimi/home/set/Setup.dart';
@@ -22,6 +23,7 @@ import 'package:make_mimi/utils/AlertGo.dart';
 import 'package:make_mimi/utils/Help.dart';
 import 'package:make_mimi/utils/OutEvent.dart';
 import 'package:make_mimi/utils/com_service.dart';
+import 'package:make_mimi/utils/showtoast_util.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -166,6 +168,7 @@ class _HomeState extends State<Home> {
             buildTitle(),
             Container(height: 5,),
             buildMoney(),
+            Container(height: 5,),
             buildNumber(),
             Container(height: 5,),
             buildTask(),
@@ -414,8 +417,8 @@ class _HomeState extends State<Home> {
   //账户
   Widget buildNumber(){
 
-    List<String> titleList  = ['佣金（元）','本金（元）','保证金（元）'];
-    List<String> numberList  = [user == null?'0.00':user['totalRevenue'].toString(),user == null?'0.00':user['balance'],user == null?'0.00':user['deposit']];
+    List<String> titleList  = ['总资产（元）','保证金（元）'];
+    List<String> numberList  = [user == null?'0.00':user['total_balance'].toString(),user == null?'0.00':user['deposit']];
     List<Positioned> pList = new List();
 
     for (int i = 0; i< titleList.length;i++){
@@ -456,22 +459,72 @@ class _HomeState extends State<Home> {
                   child: Text(numberList[i],textAlign: TextAlign.center,style: TextStyle(fontSize: 17,fontWeight: FontWeight.bold),),
                 ),
                 Positioned(
-                  width: 50,
+                  width: 100,
                   right: 15,
                   height: 20,
                   top: 95,
                   child: GestureDetector(
                     onTap: (){
                       print('提现');
-                      Route_all.push(context, Draw(['10','2','4'][i],[user['totalRevenue'].toString(),user['balance'],user['deposit']][i]));
+                      if(user['bank_name'] == null){
+                        Route_all.push(context, BlindBank((){
+                          _pullToRefresh();
+                        }));
+                      }else{
+                        if (i == 0){
+                          Route_all.push(context, Draw('2', user['total_balance'].toString(), user['bank_name'],user['bank_num'], (){
+                            _pullToRefresh();
+                          }));
+                        }else{
+                          showDialog<Null>(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (BuildContext context) {
+                              return  AlertDialog(
+                                title:  Text('提示'),
+                                content:  SingleChildScrollView(
+                                  child:  ListBody(
+                                    children: <Widget>[
+                                      Text('提现保证金后不能接收任务，是否提现', style: TextStyle(
+                                        ///字体颜色
+                                        color: Colors.red,
+                                        ///字体的大小
+                                        fontSize: 16,
+                                      )),
+                                    ],
+                                  ),
+                                ),
+                                actions: <Widget>[
+                                  FlatButton(
+                                    child:  Text('确定'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      backMoney();
+                                    },
+                                  ),
+                                  FlatButton(
+                                    child:  Text('取消'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
+
+                      }
+
+
                     },
                     child: Container(
                       color: Colors.white,
-                      child: Text('提现',textAlign: TextAlign.right,),
+                      child: Text(['提现','退保证金'][i],textAlign: TextAlign.right,),
                     ),
                   ),
                 ),
-                i == 2?
+                i == 1?
                 Positioned(
                   width: 50,
                   left: 15,
@@ -502,6 +555,25 @@ class _HomeState extends State<Home> {
         children:pList,
       ),
     );
+  }
+
+  backMoney(){
+    Map<String, dynamic> map = Map();
+
+    map.putIfAbsent("amount", () => user['deposit']);
+    map.putIfAbsent("type", () => '4');
+
+    print(map);
+
+    Com_Service().post(map, "/user/withdraw", (response) {
+
+      print("提现成功");
+      print(response);
+      showToast('提交成功');
+    }, (fail) {
+      print("失败");
+
+    });
   }
 
   Widget buildTask(){

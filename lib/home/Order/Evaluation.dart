@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:make_mimi/utils/Help.dart';
 import 'package:make_mimi/utils/com_service.dart';
 import 'package:make_mimi/utils/loading.dart';
 import 'package:make_mimi/utils/showtoast_util.dart';
@@ -127,7 +128,7 @@ class _EvaluationState extends State<Evaluation> {
     List titleList = ['任务信息','上传评价截图'];
 
     return Container(
-      color: Color(0xffcccccc),
+      color: Helps().home,
       height: 40,
       child: Stack(
         children: <Widget>[

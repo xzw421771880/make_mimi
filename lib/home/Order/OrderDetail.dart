@@ -160,7 +160,7 @@ class _OrderDetailState extends State<OrderDetail> {
     List titleList = ['任务状态', '商品信息', '任务信息', '任务要求'];
 
     return Container(
-      color: Color(0xffcccccc),
+      color: Helps().home,
       height: 40,
       child: Stack(
         children: <Widget>[
@@ -238,7 +238,7 @@ class _OrderDetailState extends State<OrderDetail> {
 
 
     return Container(
-      color: Color(0xffcccccc),
+      color: Helps().home,
       height: 40,
       child: Stack(
         children: <Widget>[

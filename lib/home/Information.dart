@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:make_mimi/utils/Help.dart';
 
 
 class Information extends StatefulWidget {
@@ -86,7 +87,7 @@ class _InformationState extends State<Information> {
     List titleList = ['基本信息','淘宝信息'];
 
     return Container(
-      color: Color(0xffcccccc),
+      color: Helps().home,
       height: 50,
       child: Stack(
         children: <Widget>[

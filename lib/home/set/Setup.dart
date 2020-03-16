@@ -75,7 +75,7 @@ class _SetupState extends State<Setup> {
                   buildCell(0),
                   buildCell(1),
                   buildWx(),
-                  buildWarn()
+//                  buildWarn()
                 ],
               )
           ),

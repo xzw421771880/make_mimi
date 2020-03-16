@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:make_mimi/utils/Help.dart';
 import 'package:make_mimi/utils/com_service.dart';
 import 'package:make_mimi/utils/loading.dart';
 import 'package:make_mimi/utils/showtoast_util.dart';
@@ -194,6 +195,13 @@ class _CompleteState extends State<Complete> {
 
                 children: <Widget>[
 
+                  Container(
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.all(15),
+                    child:
+              Text('垫付任务请确认任务中本金是否与要购买的垫付任务商品的实际付款价格相同，如商品实际购买价格与任务的本金金额不一致，请取消订单或联系客服！',style: TextStyle(color: Colors.red),),
+                  ),
+
                   buildTitle(0),
                   orderInfo == null?Container():buildDetail(['${orderInfo['shop_name']}(${orderMold[orderInfo['task_mold']]})','任务编号：${orderInfo['id']}','本金：${orderInfo['goods_deal_price']}元','佣金：${orderInfo['task_commission']}元']),
 
@@ -246,7 +254,7 @@ class _CompleteState extends State<Complete> {
     List titleList = ['任务信息','完成进度','上传评价截图'];
 
     return Container(
-      color: Color(0xffcccccc),
+      color: Helps().home,
       height: 40,
       child: Stack(
         children: <Widget>[
@@ -560,6 +568,7 @@ class _CompleteState extends State<Complete> {
       print("提交成功");
       print(response);
       showToast("提交成功！！！");
+      widget.back();
       Navigator.pop(context);
     }, (fail){
 

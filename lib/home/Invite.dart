@@ -2,6 +2,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:make_mimi/config/router_utils.dart';
 import 'package:make_mimi/home/InviteRecord.dart';
 import 'package:make_mimi/utils/showtoast_util.dart';
@@ -107,12 +108,12 @@ class _InviteState extends State<Invite> {
             ),
 
           ),
-          Positioned(
-            bottom: 60,
-            left: 0,
-            right: 0,
-            child: Text('分享专属链接，邀请好友注册',textAlign: TextAlign.center,style: TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.bold),),
-          )
+//          Positioned(
+//            bottom: 60,
+//            left: 0,
+//            right: 0,
+//            child: Text('分享专属链接，邀请好友注册',textAlign: TextAlign.center,style: TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.bold),),
+//          )
         ],
       ),
 
@@ -136,19 +137,19 @@ class _InviteState extends State<Invite> {
                   Positioned(left: 0,right: 0,top: 0,bottom: 0,
                     child: Container(
                       alignment: Alignment.center,
-                      child: Text(widget.user['invite_code'],style: TextStyle(fontWeight: FontWeight.bold,fontSize: 23,color: Colors.orange),),
+                      child: Text(widget.user['invite_code'],style: TextStyle(fontWeight: FontWeight.bold,fontSize: MediaQuery.of(context).size.width/414 *23,color: Colors.orange),),
                     ),)
                 ,
                   Positioned(
-                    right: 30,
-                    width: 60,
+                    right: 30 * MediaQuery.of(context).size.width/414,
+                    width: 60 * MediaQuery.of(context).size.width/414,
                     top: 7,
                     bottom: 7,
                       child: MaterialButton(
                         padding: EdgeInsets.all(0),
                         color: Colors.orange,
                         textColor: Colors.white,
-                        child: Text('复制', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold,),
+                        child: Text('复制', style: TextStyle(fontSize: MediaQuery.of(context).size.width/414 *15, fontWeight: FontWeight.bold,),
 
                         ),
                         onPressed: () {
@@ -183,7 +184,7 @@ class _InviteState extends State<Invite> {
               height: 160,
 //              color: Colors.red,
               child: QrImage(
-                data: 'https://hao.360.com/?src=lm&ls=n31c42a959f',
+                data: 'http://sd.zy.hzchongqv.cn/app-release.apk',
 //                embeddedImage:  NetworkImage(
 //                    'http://yunhe.zy.hzchongqv.cn/uploads/image/logo.png'),
 //                embeddedImageStyle: QrEmbeddedImageStyle(
@@ -196,7 +197,7 @@ class _InviteState extends State<Invite> {
 
           Padding(padding: EdgeInsets.all(10),
 
-            child: Text('https://hao.360.com/?src=lm&ls=n31c42a959f'),
+            child: Text('http://sd.zy.hzchongqv.cn/app-release.apk',style: TextStyle(fontSize: MediaQuery.of(context).size.width/414 *15),),
           ),
           Padding(
             padding: EdgeInsets.all(10),
@@ -214,7 +215,7 @@ class _InviteState extends State<Invite> {
 
                   print('复制');
                   ClipboardData data = new ClipboardData(
-                      text: widget.user['invite_code']);
+                      text: 'http://sd.zy.hzchongqv.cn/app-release.apk');
                   Clipboard.setData(data);
 //                  print('复制');
                   showToast('复制成功');

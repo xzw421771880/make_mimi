@@ -1,5 +1,7 @@
 
 import 'package:flutter/material.dart';
+import 'package:make_mimi/utils/Help.dart';
+import 'package:make_mimi/utils/com_service.dart';
 
 
 class CommissionRecord extends StatefulWidget {
@@ -11,33 +13,36 @@ class CommissionRecord extends StatefulWidget {
 
 class _CommissionRecordState extends State<CommissionRecord> {
 
+  Map mydata = Map();
+  List dataList = List();
 
   @override
   void initState() {
     super.initState();
-    getDetail();
+    getData();
   }
 
-  getDetail() {
-//    print("getuser --------------");
-//    Map<String, dynamic> map = Map();
-//    map.putIfAbsent("prodId", () => widget.productId);
-//    Com_Service().get(map, "/prod/prodInfo", (response) {
-//      print("商品详情");
-//      print(response);
-//
-//      detailData = response;
-//      Map model = detailData['skuList'][0];
-//      sku = model['skuName'].toString().replaceAll(" ", ',');
-//      price = model['price'].toString();
-//      imageStr = model['pic'];
-//      setState(() {
-//        print("更新");
-//      });
-////      print(meModel.balanceUsdt);
-//    }, (fail) {
-//
-//    });
+  getData() {
+
+    //1充值, 2提现, 3充值保证金, 4提出保证金 5商品垫付金额 6任务费用 7用户返本金 8用户返佣 9返佣提成10佣金提现
+    print("getuser --------------");
+    Map<String, dynamic> map = Map();
+    map.putIfAbsent("page", () => 1);
+    map.putIfAbsent("pageSize", () => 20);
+//    map.putIfAbsent("type", () => widget.type);
+    Com_Service().post(map, "/user/operatin", (response) {
+      print("提现记录");
+      print(response);
+
+      mydata = response;
+      dataList.addAll(response['list']);
+      setState(() {
+        print("更新");
+      });
+//      print(meModel.balanceUsdt);
+    }, (fail) {
+
+    });
   }
 
 
@@ -59,7 +64,7 @@ class _CommissionRecordState extends State<CommissionRecord> {
           elevation: 0,
         ),
         body: ListView.builder(
-            itemCount: 3,
+            itemCount: dataList.length + 1,
             itemBuilder: (BuildContext context,int index){
 
               return buildCells(index);
@@ -75,7 +80,11 @@ class _CommissionRecordState extends State<CommissionRecord> {
     if (index == 0){
       listStr = ['订单号','类别','金额','日期'];
     }else{
-      listStr = ['18888888','一级分佣','8.88','2019-10-10 10:10'];
+      Map model = dataList[index - 1];
+      Map type = mydata['range']['type'];
+      String time = Helps().strToDate(int.parse(model['created_at']));
+      print(time);
+      listStr = [model['id'],type[model['type']],model['amount'],time];
     }
 
     List<Positioned>  list = getDataList(listStr);
@@ -101,12 +110,6 @@ class _CommissionRecordState extends State<CommissionRecord> {
     return list;
   }
 
-  String strToDate(int dataStr){
-    var date2 = DateTime.fromMillisecondsSinceEpoch(dataStr*1000);
-    List<String> list  = date2.toString() .split('.');
-    print('------------------------时间戳转日期：${list[0]}');
-    return list[0];
-  }
 
 
   Positioned buildPosition(int index,String title){
@@ -120,7 +123,7 @@ class _CommissionRecordState extends State<CommissionRecord> {
 
 //        color: Colors.grey,
         alignment: Alignment.center,
-        child: Text(title,maxLines: 1,style: TextStyle(
+        child: Text(title,maxLines: 2,style: TextStyle(
           fontSize: 13,
           color: Color(0xff555555),
         ),),

@@ -56,7 +56,7 @@ class _HelpCenterState extends State<HelpCenter> {
             }),
         elevation: 0,
       ),
-      body: data == null?Container(): Html(data: data['help_content'],),
+      body: data == null?Container(): Html(padding: EdgeInsets.only(left: 15,right: 15), data: data['help_content'],),
     );
   }
 
