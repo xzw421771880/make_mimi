@@ -77,17 +77,17 @@ class _InviteState extends State<Invite> {
   Widget buildBack(){
 
     return Container(
-      height: 600,
+      height: 600 *MediaQuery.of(context).size.width/414,
       child: Stack(
         children: <Widget>[
           Positioned(left: 0,top: 0,right: 0,bottom: 0, child: Image(image: AssetImage('images/home/home_invite_back.png'))),
 
           Positioned(
 
-            left: 50,
-            right: 50,
-            top: 50,
-            height: 400,
+            left: 50 *MediaQuery.of(context).size.width/414,
+            right: 50 *MediaQuery.of(context).size.width/414,
+            top: 50*MediaQuery.of(context).size.width/414,
+            height: 450 *MediaQuery.of(context).size.width/414,
             child: Container(
               decoration: BoxDecoration(
                   color: Colors.white,
@@ -195,7 +195,7 @@ class _InviteState extends State<Invite> {
 
           ),
 
-          Padding(padding: EdgeInsets.all(10),
+          Padding(padding: EdgeInsets.only(top: 10),
 
             child: Text('http://sd.zy.hzchongqv.cn/app-release.apk',style: TextStyle(fontSize: MediaQuery.of(context).size.width/414 *15),),
           ),
