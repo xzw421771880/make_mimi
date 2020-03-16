@@ -19,7 +19,7 @@ PODS:
 
 DEPENDENCIES:
   - city_pickers (from `.symlinks/plugins/city_pickers/ios`)
-  - Flutter (from `.symlinks/flutter/ios`)
+  - Flutter (from `.symlinks/flutter/ios-release`)
   - flutter_jpush (from `.symlinks/plugins/flutter_jpush/ios`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - image_gallery_saver (from `.symlinks/plugins/image_gallery_saver/ios`)
@@ -35,7 +35,7 @@ EXTERNAL SOURCES:
   city_pickers:
     :path: ".symlinks/plugins/city_pickers/ios"
   Flutter:
-    :path: ".symlinks/flutter/ios"
+    :path: ".symlinks/flutter/ios-release"
   flutter_jpush:
     :path: ".symlinks/plugins/flutter_jpush/ios"
   fluttertoast:
