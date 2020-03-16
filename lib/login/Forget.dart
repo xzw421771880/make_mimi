@@ -147,10 +147,11 @@ class _ForgetState extends State<Forget> {
 
     List titleList = ['手机号','验证码','密码','确认密码'];
     List hintList = ['请输入手机号','请输入验证码','请输入6-9位密码（数字字母）','请再次输入6-9位密码（数字字母）'];
-    List<int> lenthList = [11,620,20];
+//    List<int> lenthList = [11,6,20,20];
     List<TextInputType> inputList = [TextInputType.phone,TextInputType.phone,TextInputType.visiblePassword,TextInputType.visiblePassword];
 
 
+//    return Container(height: 5,);
     return Container(
       height: 50,
       color: Colors.white,
@@ -174,7 +175,7 @@ class _ForgetState extends State<Forget> {
             bottom: 0,
             child: TextField(
               obscureText: index >1?true:false,
-              maxLength: lenthList[index],
+//              maxLength: lenthList[index],
               keyboardType: inputList[index],
 //              style: TextStyle(textBaseline: TextBaseline.alphabetic),
               cursorColor: Colors.grey,
