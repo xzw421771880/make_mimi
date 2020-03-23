@@ -110,7 +110,7 @@ class _LoginState extends State<Login> {
             width: 80,
             top: 30,
             height: 80,
-            child: Image(image: AssetImage('images/login/login_title.png')),
+            child: Image(image: AssetImage('images/login/ic_launcher.png')),
 //            Image(image: AssetImage('')),
           )
         ],

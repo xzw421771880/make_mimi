@@ -83,14 +83,17 @@ class _TaskDetailState extends State<TaskDetail> {
         elevation: 0,
       ),
       body: ListView.builder(
-          itemCount: orderList.length +4+1,
+          itemCount: orderList.length +4+1 +1,
           itemBuilder:(BuildContext context,int index){
-            if (index == 4){
+            if (index == 5){
               return buildRequird();
-            }else if(index >4){
-              return buildOrder(index - 5);
+            }else if(index == 0){
+
+              return taskInfo == null? Container(): buildItem();
+            }else if(index >5){
+              return buildOrder(index - 6);
             } else{
-              return buildCell(context,index);
+              return buildCell(context,index - 1);
             }
 
           }
@@ -101,10 +104,24 @@ class _TaskDetailState extends State<TaskDetail> {
 
   Widget buildCell(BuildContext context,int index){
 
-//    String title = data[index];
+    double sum = 0.00;
+
+    if(taskInfo !=null){
+      sum += double.parse(taskInfo['goods_deal_price']) ;
+
+      List items = taskInfo['union'];
+      for (int i = 0;i<items.length;i++){
+        sum += double.parse(items[i]['goods_deal_price']) ;
+      }
+    }
+
+
 
     List titleList = ['店铺名称','任务类型','垫付金额','任务佣金'];
-    List detailList = [taskInfo == null?'***':taskInfo['shop_name'],taskInfo == null?'***':taskInfo['type_name'],taskInfo == null?'***':'￥${taskInfo['find_pay_conut']}',taskInfo == null?'***':'￥${taskInfo['goods_show_price']}'];
+    List detailList = [taskInfo == null?'***':taskInfo['shop_name'],
+      taskInfo == null?'':taskInfo['type_name'],
+      taskInfo == null?'':'￥${sum.toStringAsFixed(2)}',
+      taskInfo == null?'':'￥${taskInfo['task_commission']}'];
 
 
 
@@ -144,6 +161,95 @@ class _TaskDetailState extends State<TaskDetail> {
             ),
           )
         ],
+      ),
+    );
+  }
+
+  Widget buildItem() {
+    print('union');
+    print(taskInfo['union']);
+
+    List items = taskInfo['union'];
+
+    List<Padding> padList = List();
+
+    padList.add(Padding(
+      padding: EdgeInsets.all(0),
+      child: Container(
+        height: 120,
+        child: Stack(
+          children: <Widget>[
+            Positioned(
+              left: 15,
+              top: 10,
+              bottom: 10,
+              width: 100,
+              child: Image.network(
+                taskInfo['goods_pic'], fit: BoxFit.cover,),
+            ),
+            Positioned(
+                left: 120,
+                top: 10,
+                child: Text('商品名称：${taskInfo['goods_name']}')
+            ),
+            Positioned(
+                left: 120,
+                top: 40,
+                child: Text('商品成交价格：${taskInfo['goods_deal_price']}元')
+            ),
+            Positioned(
+                left: 120,
+                top: 70,
+                child: Text('每单商品数量：${taskInfo['goods_count']}件')
+            )
+          ],
+        ),
+      ),
+    ));
+
+    for(int i = 0;i<items.length;i++){
+      padList.add(Padding(
+        padding:EdgeInsets.all(0),
+//        padding: EdgeInsets.only(left: 15,right: 15,top: 5,bottom: 5),
+        child: Container(
+          height: 120,
+          child:Stack(
+          children: <Widget>[
+            Positioned(
+              left: 15,
+              top: 10,
+              bottom: 10,
+              width: 100,
+              child: Image.network(
+                items[i]['goods_pic'], fit: BoxFit.cover,),
+            ),
+            Positioned(
+                left: 120,
+                top: 10,
+                child: Text('商品名称：${items[i]['goods_name']}')
+            ),
+            Positioned(
+                left: 120,
+                top: 40,
+                child: Text('商品成交价格：${items[i]['goods_deal_price']}元')
+            ),
+            Positioned(
+                left: 120,
+                top: 70,
+                child: Text('每单商品数量：${items[i]['goods_count']}件')
+            )
+          ],
+        ),
+        )
+
+
+      ));
+    }
+
+    return Container(
+      color: Colors.white,
+      child: Column(
+        children:padList,
       ),
     );
   }

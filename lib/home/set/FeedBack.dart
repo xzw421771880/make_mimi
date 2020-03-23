@@ -41,106 +41,116 @@ class _FeedBackState extends State<FeedBackVc> {
             }),
         elevation: 0,
       ),
-      body: Container(
-        child: Stack(
-          children: <Widget>[
-            Positioned(
-                top: 15,
-                left: 15,
-                width: MediaQuery
-                    .of(context)
-                    .size
-                    .width - 30,
-                height: 315,
-                child: Container(
-                  color: Color(0xffeeeeee),
-                  child: TextField(
-                    maxLines: 13,
-                    maxLength: 300,
-                    style: TextStyle(
-                        color: Colors.black54,
-                        fontSize: 15),
-                    decoration: InputDecoration(
-                      hintText: "请输入留言内容",
-                      hintStyle: TextStyle(
-                          color: Colors.grey,
+      body: GestureDetector(
+        onTap: (){
+          print('111');
+//          FocusScope.of(context).requestFocus(new FocusNode());
+        },
+        child: Container(
+          child: Stack(
+            children: <Widget>[
+              Positioned(
+                  top: 15,
+                  left: 15,
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width - 30,
+                  height: 315,
+                  child: Container(
+                    color: Color(0xffeeeeee),
+                    child: TextField(
+                      maxLines: 13,
+                      maxLength: 300,
+                      style: TextStyle(
+                          color: Colors.black54,
                           fontSize: 15),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color:  Color(0xffffff),
+                      decoration: InputDecoration(
+                        hintText: "请输入留言内容",
+                        hintStyle: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 15),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color:  Color(0xffffff),
 //                        width: ScreenUtil.instance.setWidth(1.0)
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color(0xffffff),
+//                        width: ScreenUtil.instance.setWidth(1.0)
+                          ),
                         ),
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Color(0xffffff),
-//                        width: ScreenUtil.instance.setWidth(1.0)
-                        ),
-                      ),
+                      onChanged: (value){
+                        print(value);
+                        word = value;
+//                        FocusScope.of(context).requestFocus(new FocusNode());
+                      },
+                      autofocus: true,
+                        textInputAction: TextInputAction.done
                     ),
-                    onChanged: (value){
-                      print(value);
-                      word = value;
-                    },
-                  ),
-                )
+                  )
 
-            ),
-            Positioned(
-              top: 350,
-              height: 70,
-              left: 15,
-              right: 15,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: images.length,
-                itemBuilder: (BuildContext context, int index) {
-
-                  return buildImage(context, index);
-
-                },
               ),
-            ),
-            Positioned(
-                top: 440,
-                height: 55,
+              Positioned(
+                top: 350,
+                height: 70,
                 left: 15,
-                width: 55,
-                child:GestureDetector(
-                  onTap: alert,
-                  child: Image(
-                    image: AssetImage("images/home/leave_tjtp1_normal.png"),
-                  ),
-                )
-            ),
-            Positioned(
+                right: 15,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: images.length,
+                  itemBuilder: (BuildContext context, int index) {
 
-              left: 0,
-              bottom: MediaQuery.of(context).padding.bottom,
-              height: 50,
-              right: 0,
-              child: MaterialButton(
-                color: Colors.blue,
-                textColor: Colors.white,
+                    return buildImage(context, index);
 
-                child: new Text('提交', style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),),
+                  },
+                ),
+              ),
+              Positioned(
+                  top: 440,
+                  height: 55,
+                  left: 15,
+                  width: 55,
+                  child:GestureDetector(
+                    onTap: alert,
+                    child: Image(
+                      image: AssetImage("images/home/leave_tjtp1_normal.png"),
+                    ),
+                  )
+              ),
+              Positioned(
+
+                left: 0,
+                bottom: MediaQuery.of(context).padding.bottom,
+                height: 50,
+                right: 0,
+                child: MaterialButton(
+                  color: Colors.blue,
+                  textColor: Colors.white,
+
+                  child: new Text('提交', style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),),
 //            shape: RoundedRectangleBorder(
 //              borderRadius: BorderRadius.all(Radius.circular(15)),
 //            ),
-                onPressed: () {
-                  print("提交");
+                  onPressed: () {
+                    print("提交");
 
-                  imageAllUpdate();
+                    imageAllUpdate();
 //                  commit();
-                },
-              ),
-            )
+                  },
+                ),
+              )
 
-          ],
+            ],
+          ),
         ),
+
       ),
     );
   }

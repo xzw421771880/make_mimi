@@ -274,15 +274,15 @@ class _ForgetState extends State<Forget> {
 
   nextCommit(){
 
-//    if(msgCode == null){
-//      showToast('请输入验证码');
-//      return;
-//    }
-//
-//    if(msgCode.length < 6){
-//      showToast('请输入验证码');
-//      return;
-//    }
+    if(msgCode == null){
+      showToast('请输入验证码');
+      return;
+    }
+
+    if(msgCode.length < 6){
+      showToast('请输入验证码');
+      return;
+    }
 
     if(password == null){
       showToast('请输入密码');
@@ -313,7 +313,7 @@ class _ForgetState extends State<Forget> {
     print('3333');
     map.putIfAbsent("mobile", () => mobile);
     map.putIfAbsent("newPassword", () => password);
-    map.putIfAbsent("msgCode", () => '888888');
+    map.putIfAbsent("msgCode", () => msgCode);
 
 
 

@@ -184,7 +184,7 @@ class _InviteState extends State<Invite> {
               height: 160,
 //              color: Colors.red,
               child: QrImage(
-                data: 'http://sd.zy.hzchongqv.cn/app-release.apk',
+                data: 'http://sd.zy.hzchongqv.cn/download.html',
 //                embeddedImage:  NetworkImage(
 //                    'http://yunhe.zy.hzchongqv.cn/uploads/image/logo.png'),
 //                embeddedImageStyle: QrEmbeddedImageStyle(
@@ -197,7 +197,7 @@ class _InviteState extends State<Invite> {
 
           Padding(padding: EdgeInsets.only(top: 10),
 
-            child: Text('http://sd.zy.hzchongqv.cn/app-release.apk',style: TextStyle(fontSize: MediaQuery.of(context).size.width/414 *15),),
+            child: Text('http://sd.zy.hzchongqv.cn/download.html',style: TextStyle(fontSize: MediaQuery.of(context).size.width/414 *15),),
           ),
           Padding(
             padding: EdgeInsets.all(10),
@@ -215,7 +215,7 @@ class _InviteState extends State<Invite> {
 
                   print('复制');
                   ClipboardData data = new ClipboardData(
-                      text: 'http://sd.zy.hzchongqv.cn/app-release.apk');
+                      text: 'http://sd.zy.hzchongqv.cn/download.html');
                   Clipboard.setData(data);
 //                  print('复制');
                   showToast('复制成功');

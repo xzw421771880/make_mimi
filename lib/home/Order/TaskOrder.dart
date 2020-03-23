@@ -24,6 +24,7 @@ class _TaskOrderState extends State<TaskOrder> {
   ScrollController _controller = new ScrollController();
   Map mydata = Map();
   List dataList = List();
+  List taskList = List();
 
 
   int totalSize = 0; //总条数
@@ -82,8 +83,10 @@ class _TaskOrderState extends State<TaskOrder> {
       orderStatus = response['range']['order_status'];
       if (currentPage == 1){
         dataList.clear();
+        taskList.clear();
       }
       dataList.addAll(response['list']);
+      taskList.addAll(response['taskList']);
       setState(() {
         print("更新");
       });
@@ -178,6 +181,15 @@ class _TaskOrderState extends State<TaskOrder> {
     Map item = dataList[index];
     print(item['status']);
 
+    double sum = 0.00;
+    sum += double.parse(item['goods_deal_price']) ;
+
+    List items = taskList[index];
+    print(items);
+    for (int i = 0;i<items.length;i++){
+      sum += double.parse(items[i]['goods_deal_price']) * int.parse(items[i]['goods_count']) ;
+    }
+
     return GestureDetector(
       onTap: (){
 
@@ -239,7 +251,7 @@ class _TaskOrderState extends State<TaskOrder> {
               child: Container(
                 height: 30,
                 alignment: Alignment.centerLeft,
-                child: Text('本金：${item['goods_deal_price']}元'),
+                child: Text('本金：${sum.toStringAsFixed(2)}元'),
               ),
             ),
             Padding(

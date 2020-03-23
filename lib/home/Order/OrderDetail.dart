@@ -54,6 +54,19 @@ class _OrderDetailState extends State<OrderDetail> {
 
   @override
   Widget build(BuildContext context) {
+
+    double sum = 0.00;
+    if (orderInfo !=null){
+
+      sum += double.parse(orderInfo['goods_deal_price']) ;
+
+      List items = orderInfo['union'];
+      for (int i = 0;i<items.length;i++){
+        sum += double.parse(items[i]['goods_deal_price']) * int.parse(items[i]['goods_count']);
+      }
+    }
+
+
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       appBar: AppBar(
@@ -93,15 +106,16 @@ class _OrderDetailState extends State<OrderDetail> {
           orderInfo == null ? Container() :
           buildItem(),
           orderInfo == null?Container():
-          buildTypeTitle(),
+//          buildTypeTitle(),
           orderInfo == null?Container():
-          buildSDetail(),
+//          buildSDetail(),
           buildTitle(2),
           orderInfo == null ? Container() :
+
           buildDetail([
             '${orderInfo['shop_name']}(${orderMold[orderInfo['task_mold']]})',
             '任务编号：${orderInfo['id']}',
-            '本金：${orderInfo['goods_deal_price']}元',
+            '本金：${sum.toStringAsFixed(2)}元',
             '佣金：${orderInfo['task_commission']}元',
             '派单时间：${Helps().strToDate(int.parse(orderInfo['updated_at']))}'
           ]),
@@ -115,14 +129,107 @@ class _OrderDetailState extends State<OrderDetail> {
   }
 
   Widget buildItem() {
-    return Container(
-      child: Column(
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.all(0),
+    print('union');
+    print(orderInfo['union']);
+
+    List items = orderInfo['union'];
+
+    List<Padding> padList = List();
+
+    padList.add(Padding(
+      padding: EdgeInsets.all(0),
+        child: Container(
+          height: 120,
+          child: Stack(
+            children: <Widget>[
+              Positioned(
+                left: 15,
+                top: 10,
+                bottom: 10,
+                width: 100,
+                child: Image.network(
+                  orderInfo['goods_pic'], fit: BoxFit.cover,),
+              ),
+              Positioned(
+                  left: 120,
+                  top: 10,
+                  child: Text('商品名称：${orderInfo['goods_name']}')
+              ),
+              Positioned(
+                  left: 120,
+                  top: 40,
+                  child: Text('商品成交价格：${orderInfo['goods_deal_price']}元')
+              ),
+              Positioned(
+                  left: 120,
+                  top: 70,
+                  child: Text('每单商品数量：${orderInfo['goods_count']}件')
+              ),
+              Positioned(
+                  height: 25,
+                  width: 70,
+                  right: 15,
+                  bottom: 10,
+                  child: FlatButton(
+                      padding: EdgeInsets.all(0),
+                      color: Helps().home,
+                      onPressed: (){
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context){
+                              return Scaffold(
+                                backgroundColor: Color(0x00000000),
+                                body: GestureDetector(
+                                  onTap: (){
+                                    Navigator.pop(context);
+                                  },
+                                  child: ListView(
+                                    children: <Widget>[
+                                      Container(
+                                        height: 300,
+                                        color: Colors.transparent,
+//                          ),
+                                      ),
+
+                                      buildSDetail(orderInfo),
+//                      )
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }
+                        );
+                      },
+                      child: Text('查看属性',),
+                  )
+              ),
+              Positioned(
+                left: 15,
+                right: 15,
+                height: .5,
+                bottom: 0,
+                child: Container(
+                  color: Colors.grey,
+                ),
+              )
+            ],
+          ),
+        ),
+    ));
+
+    for(int i = 0;i<items.length;i++){
+      padList.add(Padding(
+          padding:EdgeInsets.all(0),
+//        padding: EdgeInsets.only(left: 15,right: 15,top: 5,bottom: 5),
+          child: GestureDetector(
+            onTap: (){
+
+              print(i);
+            },
             child: Container(
               height: 120,
-              child: Stack(
+              color: Colors.white,
+              child:Stack(
                 children: <Widget>[
                   Positioned(
                     left: 15,
@@ -130,28 +237,84 @@ class _OrderDetailState extends State<OrderDetail> {
                     bottom: 10,
                     width: 100,
                     child: Image.network(
-                      orderInfo['goods_pic'], fit: BoxFit.cover,),
+                      items[i]['goods_pic'], fit: BoxFit.cover,),
                   ),
                   Positioned(
                       left: 120,
                       top: 10,
-                      child: Text('商品名称：${orderInfo['goods_name']}')
+                      child: Text('商品名称：${items[i]['goods_name']}')
                   ),
                   Positioned(
                       left: 120,
                       top: 40,
-                      child: Text('商品成交价格：${orderInfo['goods_deal_price']}元')
+                      child: Text('商品成交价格：${items[i]['goods_deal_price']}元')
                   ),
                   Positioned(
                       left: 120,
                       top: 70,
-                      child: Text('每单商品数量：${orderInfo['goods_count']}件')
+                      child: Text('每单商品数量：${items[i]['goods_count']}件')
+                  ),
+                  Positioned(
+                      height: 25,
+                      width: 70,
+                      right: 15,
+                      bottom: 10,
+                      child: FlatButton(
+                        padding: EdgeInsets.all(0),
+                        color: Helps().home,
+                        onPressed: (){
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context){
+                                return Scaffold(
+                                  backgroundColor: Color(0x00000000),
+                                  body: GestureDetector(
+                                    onTap: (){
+                                      Navigator.pop(context);
+                                    },
+                                    child: ListView(
+                                      children: <Widget>[
+                                        Container(
+                                          height: 300,
+                                          color: Colors.transparent,
+//                          ),
+                                        ),
+
+                                        buildSDetail(items[i]),
+//                      )
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              }
+                          );
+                        },
+                        child: Text('查看属性',),
+                      )
+                  ),
+                  Positioned(
+                    left: 15,
+                    right: 15,
+                    height: .5,
+                    bottom: 0,
+                    child: Container(
+                      color: Colors.grey,
+                    ),
                   )
                 ],
               ),
             ),
+
           )
-        ],
+
+
+      ));
+    }
+
+    return Container(
+      color: Colors.white,
+      child: Column(
+        children:padList,
       ),
     );
   }
@@ -259,28 +422,32 @@ class _OrderDetailState extends State<OrderDetail> {
   }
 
 
-  Widget buildSDetail(){
+  Widget buildSDetail(Map item){
 
-    if(orderInfo['task_mold'] == '1'){
-      return buildDetailSearch();
-    }else if(orderInfo['task_mold'] == '2'){
+    if(item['task_mold'] == '1'){
+      return buildDetailSearch(item);
+    }else if(item['task_mold'] == '2'){
 
-      return buildDetailPaste();
+      return buildDetailPaste(item);
     }else{
 
-      return buildDetailCode();
+      return buildDetailCode(item);
     }
 
   }
 
-  Widget buildDetailSearch(){
+  Widget buildDetailSearch(Map item){
 
     Map sorts = orderInfo['range']['find_sort'];
 
-    String sort = sorts[orderInfo['find_sort']];
+    String sort = sorts[item['find_sort']];
 
     List<Padding> padList = List();
-    List titleList = ['搜索关键字：${orderInfo['order_keyword']}','定位排序：${sort}','定位付款数量：${orderInfo['find_pay_conut']}','定位价格区间：${orderInfo['find_price_min']} - ${orderInfo['find_price_max']}','定位发货区域：${orderInfo['find_send_area']}'];
+    List titleList = ['搜索关键字：${item['order_keyword'] == null?'':item['order_keyword']}',
+      '定位排序：${sort== null?'':sort}',
+      '定位付款数量：${item['find_pay_conut'] == null?'':item['find_pay_conut']}',
+      '定位价格区间：${item['find_price_min'] == null?'':item['find_price_min']} - ${item['find_price_max']== null?'':item['find_price_max']}',
+      '定位发货区域：${item['find_send_area'] == null?'':item['find_send_area']}'];
 
     for(int i = 0;i<titleList.length;i++){
       padList.add(Padding(
@@ -302,7 +469,7 @@ class _OrderDetailState extends State<OrderDetail> {
   }
 
   //淘口令
-  Widget buildDetailPaste(){
+  Widget buildDetailPaste(Map item){
 
     //order_tpassword
     return Container(
@@ -314,7 +481,7 @@ class _OrderDetailState extends State<OrderDetail> {
             padding: EdgeInsets.only(left: 20,top: 20,right: 20,bottom: 10),
             child: Container(
               alignment: Alignment.center,
-              child: Text(orderInfo['order_tpassword']),
+              child: Text(item['order_tpassword']),
             ),
           ),
           Padding(
@@ -327,7 +494,7 @@ class _OrderDetailState extends State<OrderDetail> {
                 onPressed: (){
 
                   ClipboardData data = new ClipboardData(
-                            text: orderInfo['order_tpassword']);
+                            text: item['order_tpassword']);
                         Clipboard.setData(data);
                         showToast('复制成功',);
                 },
@@ -341,9 +508,9 @@ class _OrderDetailState extends State<OrderDetail> {
 
 
   //二维码
-  Widget buildDetailCode(){
+  Widget buildDetailCode(Map item){
 
-    Image image = Image.network(orderInfo['order_qrcode']);
+    Image image = Image.network(item['order_qrcode']);
 
     return Container(
       height: 180,
