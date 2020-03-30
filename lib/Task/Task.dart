@@ -163,12 +163,12 @@ class _TaskState extends State<Task> {
               height: 80,
               child: Image.network(item['goods_pic'],fit: BoxFit.cover,),
             ),
-            Positioned(
-              left: 105,
-              top: 15,
-
-              child: Text(item['shop_name']),
-            ),
+//            Positioned(
+//              left: 105,
+//              top: 15,
+//
+//              child: Text(item['shop_name']),
+//            ),
             Positioned(
               right: 15,
               top: 15,

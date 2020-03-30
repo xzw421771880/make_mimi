@@ -3,7 +3,9 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:make_mimi/utils/CheckUrl.dart';
 import 'package:make_mimi/utils/Help.dart';
 import 'package:make_mimi/utils/com_service.dart';
 import 'package:make_mimi/utils/loading.dart';
@@ -32,6 +34,8 @@ class _CompleteState extends State<Complete> {
   Map orderMold = Map();
   List requires = List();
   List requiresImage = List();
+
+  List checkUrlList = List();
 
   List progress = List();
   int progressed = 0;
@@ -105,14 +109,24 @@ class _CompleteState extends State<Complete> {
           progress.add(requires[i]);
         }
 
-
       }
 
-      _initTimer();
+
+      List items = orderInfo['union'];
+      checkUrlList.clear();
+      for (int i = 0;i<items.length+1;i++){
+        checkUrlList.add("0");
+      }
+
+
 
       setState(() {
         print("更新");
       });
+
+      _initTimer();
+
+
 //      print(meModel.balanceUsdt);
     }, (fail) {
 
@@ -163,6 +177,29 @@ class _CompleteState extends State<Complete> {
 
   @override
   Widget build(BuildContext context) {
+
+    double sum = 0.00;
+    bool checkAll = false;
+    if (orderInfo !=null){
+
+      sum += double.parse(orderInfo['goods_deal_price']) ;
+
+      List items = orderInfo['union'];
+      for (int i = 0;i<items.length;i++){
+        sum += double.parse(items[i]['goods_deal_price']) * int.parse(items[i]['goods_count']);
+      }
+      checkAll = true;
+      for(int i = 0;i<checkUrlList.length;i++){
+        if(checkUrlList[i] == '0'){
+          checkAll = false;
+          break;
+        }
+      }
+    }
+
+
+
+
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       appBar: AppBar(
@@ -203,12 +240,16 @@ class _CompleteState extends State<Complete> {
                   ),
 
                   buildTitle(0),
-                  orderInfo == null?Container():buildDetail(['${orderInfo['shop_name']}(${orderMold[orderInfo['task_mold']]})','任务编号：${orderInfo['id']}','本金：${orderInfo['goods_deal_price']}元','佣金：${orderInfo['task_commission']}元']),
-
+                  orderInfo == null?Container():
+                  buildItem(),
                   buildTitle(1),
+                  orderInfo == null?Container():buildDetail(['${orderInfo['shop_name']}(${orderMold[orderInfo['task_mold']]})','任务编号：${orderInfo['id']}','本金：${sum.toStringAsFixed(2)}元','佣金：${orderInfo['task_commission']}元']),
+
+                  progress.length == 0?Container():
+                  buildTitle(2),
                   buildProgress(),
                   requiresImage.length == 0?Container():
-                  buildTitle(2),
+                  buildTitle(3),
 
 
                   Container(
@@ -232,6 +273,10 @@ class _CompleteState extends State<Complete> {
                 ),
                 onPressed: () {
 
+                  if(checkAll == false){
+                    showToast("请验证商品");
+                    return;
+                  }
                   print('确认提交');
                   if (status == 0){
                     imageAllUpdate();
@@ -251,7 +296,7 @@ class _CompleteState extends State<Complete> {
   }
 
   Widget buildTitle(int index){
-    List titleList = ['任务信息','完成进度','上传评价截图'];
+    List titleList = ['商品验证','任务信息','完成进度','上传评价截图'];
 
     return Container(
       color: Helps().home,
@@ -269,6 +314,388 @@ class _CompleteState extends State<Complete> {
             ),
           ),
 
+        ],
+      ),
+    );
+  }
+
+  Widget buildItem() {
+    print('union');
+    print(orderInfo['union']);
+
+    List items = orderInfo['union'];
+
+    List<Padding> padList = List();
+
+    padList.add(Padding(
+      padding: EdgeInsets.all(0),
+      child: Container(
+        height: 120,
+        child: Stack(
+          children: <Widget>[
+            Positioned(
+              left: 15,
+              top: 10,
+              bottom: 10,
+              width: 100,
+              child: Image.network(
+                orderInfo['goods_pic'], fit: BoxFit.cover,),
+            ),
+            Positioned(
+                left: 120,
+                right: 15,
+                top: 10,
+                child: Text('商品名称：${orderInfo['goods_name']}',maxLines: 1,style: TextStyle(fontSize: MediaQuery.of(context).size.width/414*15),)
+            ),
+            Positioned(
+                left: 120,
+                top: 60,
+                child: Text('商品成交价格：${orderInfo['goods_deal_price']}元',style: TextStyle(fontSize: MediaQuery.of(context).size.width/414*14))
+            ),
+            Positioned(
+                left: 120,
+                top: 90,
+                child: Text('每单商品数量：${orderInfo['goods_count']}件',style: TextStyle(fontSize: MediaQuery.of(context).size.width/414*14))
+            ),
+            Positioned(
+                height: 25,
+                width: 70,
+                right: 15,
+                bottom: 50,
+                child: FlatButton(
+                  padding: EdgeInsets.all(0),
+                  color: Helps().home,
+                  onPressed: (){
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context){
+                          return Scaffold(
+                            backgroundColor: Color(0x00000000),
+                            body: GestureDetector(
+                              onTap: (){
+                                Navigator.pop(context);
+                              },
+                              child: ListView(
+                                children: <Widget>[
+                                  Container(
+                                    height: 300,
+                                    color: Colors.transparent,
+//                          ),
+                                  ),
+
+                                  buildSDetail(orderInfo),
+//                      )
+                                ],
+                              ),
+                            ),
+                          );
+                        }
+                    );
+                  },
+                  child: Text('查看属性',),
+                )
+            ),
+            Positioned(
+                height: 25,
+                width: 70,
+                right: 15,
+                bottom: 10,
+                child: FlatButton(
+                  padding: EdgeInsets.all(0),
+                  color: Helps().home,
+                  onPressed: (){
+
+                    if(checkUrlList[0] == "0"){
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context){
+                            return CheckUrl(orderInfo['goods_url'], (value){
+
+                              if(value == '0'){
+                                showToast("验证失败");
+                              }
+                              checkUrlList.replaceRange(0, 1, [value]);
+                              setState(() {
+
+                              });
+                            });
+                          }
+                      );
+                    }
+
+                  },
+                  child: Text(checkUrlList[0] == "1"?"验证通过" :'验证商品',),
+                )
+            ),
+            Positioned(
+              left: 15,
+              right: 15,
+              height: .5,
+              bottom: 0,
+              child: Container(
+                color: Colors.grey,
+              ),
+            )
+          ],
+        ),
+      ),
+    ));
+
+    for(int i = 0;i<items.length;i++){
+      padList.add(Padding(
+          padding:EdgeInsets.all(0),
+//        padding: EdgeInsets.only(left: 15,right: 15,top: 5,bottom: 5),
+          child: GestureDetector(
+            onTap: (){
+
+              print(i);
+            },
+            child: Container(
+              height: 120,
+              color: Colors.white,
+              child:Stack(
+                children: <Widget>[
+                  Positioned(
+                    left: 15,
+                    top: 10,
+                    bottom: 10,
+                    width: 100,
+                    child: Image.network(
+                      items[i]['goods_pic'], fit: BoxFit.cover,),
+                  ),
+                  Positioned(
+                      left: 120,
+                      right: 15,
+                      top: 10,
+                      child: Text('商品名称：${items[i]['goods_name']}',maxLines: 3,style: TextStyle(fontSize: MediaQuery.of(context).size.width/414*15),)
+                  ),
+                  Positioned(
+                      left: 120,
+                      top: 60,
+                      child: Text('商品成交价格：${items[i]['goods_deal_price']}元',style: TextStyle(fontSize: MediaQuery.of(context).size.width/414*14))
+                  ),
+                  Positioned(
+                      left: 120,
+                      top: 90,
+                      child: Text('每单商品数量：${items[i]['goods_count']}件',style: TextStyle(fontSize: MediaQuery.of(context).size.width/414*14))
+                  ),
+                  Positioned(
+                      height: 25,
+                      width: 70,
+                      right: 15,
+                      bottom: 50,
+                      child: FlatButton(
+                        padding: EdgeInsets.all(0),
+                        color: Helps().home,
+                        onPressed: (){
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context){
+                                return Scaffold(
+                                  backgroundColor: Color(0x00000000),
+                                  body: GestureDetector(
+                                    onTap: (){
+                                      Navigator.pop(context);
+                                    },
+                                    child: ListView(
+                                      children: <Widget>[
+                                        Container(
+                                          height: 300,
+                                          color: Colors.transparent,
+//                          ),
+                                        ),
+
+                                        buildSDetail(items[i]),
+//                      )
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              }
+                          );
+                        },
+                        child: Text('查看属性',),
+                      )
+                  ),
+                  Positioned(
+                      height: 25,
+                      width: 70,
+                      right: 15,
+                      bottom: 10,
+                      child: FlatButton(
+                        padding: EdgeInsets.all(0),
+                        color: Helps().home,
+                        onPressed: (){
+
+                          if(checkUrlList[i+1] == "0"){
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context){
+                                  return CheckUrl(items[i]['goods_url'], (value){
+
+                                    if(value == '0'){
+                                      showToast("验证失败");
+                                    }
+                                    checkUrlList.replaceRange(i+1, i+2, [value]);
+                                    setState(() {
+
+                                    });
+                                  });
+                                }
+                            );
+                          }
+
+                        },
+                        child: Text(checkUrlList[i+1] == "1"?"验证通过" :'验证商品',),
+                      )
+                  ),
+                  Positioned(
+                    left: 15,
+                    right: 15,
+                    height: .5,
+                    bottom: 0,
+                    child: Container(
+                      color: Colors.grey,
+                    ),
+                  )
+                ],
+              ),
+            ),
+
+          )
+
+
+      ));
+    }
+
+    return Container(
+      color: Colors.white,
+      child: Column(
+        children:padList,
+      ),
+    );
+  }
+
+
+  Widget buildSDetail(Map item){
+
+    if(item['task_mold'] == '1'){
+      return buildDetailSearch(item);
+    }else if(item['task_mold'] == '2'){
+
+      return buildDetailPaste(item);
+    }else{
+
+      return buildDetailCode(item);
+    }
+
+  }
+
+  Widget buildDetailSearch(Map item){
+
+    Map sorts = orderInfo['range']['find_sort'];
+
+    String sort = sorts[item['find_sort']];
+
+    List<Padding> padList = List();
+    List titleList = ['搜索关键字：${item['order_keyword'] == null?'':item['order_keyword']}',
+      '定位排序：${sort== null?'':sort}',
+      '定位付款数量：${item['find_pay_conut'] == null?'':item['find_pay_conut']}',
+      '定位价格区间：${item['find_price_min'] == null?'':item['find_price_min']} - ${item['find_price_max']== null?'':item['find_price_max']}',
+      '定位发货区域：${item['find_send_area'] == null?'':item['find_send_area']}'];
+
+    for(int i = 0;i<titleList.length;i++){
+      padList.add(Padding(
+        padding: EdgeInsets.only(left: 15,top: 0,bottom: 0),
+        child: Container(
+          alignment: Alignment.centerLeft,
+          height: 40,
+          child: Text(titleList[i]),
+        ),
+      ));
+    }
+
+    return Container(
+      color: Colors.white,
+      child: Column(
+        children: padList,
+      ),
+    );
+  }
+
+  //淘口令
+  Widget buildDetailPaste(Map item){
+
+    //order_tpassword
+    return Container(
+//      height: 50,
+      color: Colors.white,
+      child: Column(
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(left: 20,top: 20,right: 20,bottom: 10),
+            child: Container(
+              alignment: Alignment.center,
+              child: Text(item['order_tpassword']),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(10),
+            child: Container(
+              height: 35,
+              child: MaterialButton(
+                color: Colors.grey,
+                child: Text('复制口令',style: TextStyle(color: Colors.white),),
+                onPressed: (){
+
+                  ClipboardData data = new ClipboardData(
+                      text: item['order_tpassword']);
+                  Clipboard.setData(data);
+                  showToast('复制成功',);
+                },
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+
+  //二维码
+  Widget buildDetailCode(Map item){
+
+    Image image = Image.network(item['order_qrcode']);
+
+    return Container(
+      height: 180,
+      color: Colors.white,
+//child: Text('esdsd'),
+      child: Stack(
+        children: <Widget>[
+          Positioned(
+            top: 10,
+            left: 30,
+            width: 150,
+            height: 150,
+            child: GestureDetector(
+              child: image,
+              onLongPress: (){
+                print('长按---');
+//                _testSaveImg(image);
+              },
+            ),
+          ),
+//          Positioned(
+//            top: 40,
+//            left: 200,
+//            width: 70,
+//            height: 50,
+//            child: Container(
+//              alignment: Alignment.centerLeft,
+//              child: Text('长按二维码保存到相册'),
+//            ),
+//          )
         ],
       ),
     );
@@ -368,6 +795,8 @@ class _CompleteState extends State<Complete> {
 
   Widget buildProgress(){
 
+    print("333");
+    print(progress.length);
     List <Padding> list = List();
     for (int i = 0;i < progress.length;i++){
 //      print(requiresImage);

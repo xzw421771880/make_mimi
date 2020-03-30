@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_jpush/flutter_jpush.dart';
 import 'package:make_mimi/Task/TaskDetail.dart';
 import 'package:make_mimi/config/router_utils.dart';
-import 'package:make_mimi/home/Complain/CommissionRecord.dart';
+import 'package:make_mimi/home/money/CommissionRecord.dart';
 import 'package:make_mimi/home/Complain/ComplainCenter.dart';
 import 'package:make_mimi/home/HelpCenter.dart';
 import 'package:make_mimi/home/Information.dart';
@@ -16,6 +16,7 @@ import 'package:make_mimi/home/Order/TaskOrder.dart';
 import 'package:make_mimi/home/blind/Blind.dart';
 import 'package:make_mimi/home/money/BlindBank.dart';
 import 'package:make_mimi/home/money/Draw.dart';
+import 'package:make_mimi/home/money/MoneyRecord.dart';
 import 'package:make_mimi/home/money/Topup.dart';
 import 'package:make_mimi/home/set/Setup.dart';
 import 'package:make_mimi/login/Certification.dart';
@@ -374,7 +375,7 @@ class _HomeState extends State<Home> {
     return GestureDetector(
       onTap: (){
         print('我的资产');
-        Route_all.push(context, CommissionRecord());
+        Route_all.push(context, MoneyRecord());
       },
       child: Container(
         color: Colors.white,

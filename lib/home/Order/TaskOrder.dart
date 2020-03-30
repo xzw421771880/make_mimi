@@ -85,8 +85,14 @@ class _TaskOrderState extends State<TaskOrder> {
         dataList.clear();
         taskList.clear();
       }
+      print("1---222");
       dataList.addAll(response['list']);
-      taskList.addAll(response['taskList']);
+      print("1---333");
+      if (response['taskList'] != null){
+        taskList.addAll(response['taskList']);
+      }
+
+      print("1---444");
       setState(() {
         print("更新");
       });
@@ -210,61 +216,62 @@ class _TaskOrderState extends State<TaskOrder> {
             Padding(
               padding: EdgeInsets.all(0),
               child: Container(
-                height: 30,
+                height: 120,
                 child: Stack(
                   children: <Widget>[
+
                     Positioned(
                       left: 15,
-                      width: 250,
-                      top: 0,
-                      bottom: 0,
-                      child: Container(
-                        alignment: Alignment.centerLeft,
-                        child: Text(item['shop_name']),
-//                        child: Text('${item['shop_name']}(${taskType[item['task_id']]}）'),
-                      ),
+                      top: 10,
+                      bottom: 10,
+                      width: 100,
+                      child: Image.network(
+                        item['goods_pic'], fit: BoxFit.cover,),
                     ),
+//                    Positioned(
+//                      left: 15,
+//                      width: 250,
+//                      top: 0,
+//                      bottom: 0,
+//                      child: Container(
+//                        alignment: Alignment.centerLeft,
+//                        child: Text(item['shop_name']),
+////                        child: Text('${item['shop_name']}(${taskType[item['task_id']]}）'),
+//                      ),
+//                    ),
                     Positioned(
                       right: 15,
                       width: 200,
-                      top: 0,
-                      bottom: 0,
+                      top: 10,
+//                      bottom: 0,
                       child: Container(
                         alignment: Alignment.centerRight,
                         child: Text(orderStatus[item['status']]),
                       ),
-                    )
-                  ],
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 15),
-              child: Container(
-                height: 30,
-                alignment: Alignment.centerLeft,
-                child: Text('任务编号：${item['id']}'),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 15),
-              child: Container(
-                height: 30,
-                alignment: Alignment.centerLeft,
-                child: Text('本金：${sum.toStringAsFixed(2)}元'),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(0),
-              child: Container(
-                height: 30,
-                child: Stack(
-                  children: <Widget>[
+                    ),
                     Positioned(
-                      left: 15,
-                      width: 150,
-                      top: 0,
-                      bottom: 0,
+                      left: 125,
+                      top: 10,
+                      width: 100,
+                      child: Container(
+                        alignment: Alignment.centerLeft,
+                        child: Text('任务编号：${item['id']}'),
+                      ),
+                    ),
+
+                    Positioned(
+                      left: 125,
+                      top: 40,
+                      width: 100,
+                      child: Container(
+                        alignment: Alignment.centerLeft,
+                        child: Text('本金：${sum.toStringAsFixed(2)}元'),
+                      ),
+                    ),
+                    Positioned(
+                      left: 125,
+                      top: 70,
+                      width: 100,
                       child: Container(
                         alignment: Alignment.centerLeft,
                         child: Text('佣金：${item['task_commission']}元'),
@@ -273,7 +280,7 @@ class _TaskOrderState extends State<TaskOrder> {
                     Positioned(
                       right: 15,
                       width: 150,
-                      top: 0,
+//                      top: 0,
                       bottom: 0,
                       child: Container(
                         alignment: Alignment.centerRight,
@@ -284,6 +291,23 @@ class _TaskOrderState extends State<TaskOrder> {
                 ),
               ),
             ),
+//            Padding(
+//              padding: EdgeInsets.only(left: 15),
+//              child: Container(
+//                height: 30,
+//                alignment: Alignment.centerLeft,
+//                child: Text('任务编号：${item['id']}'),
+//              ),
+//            ),
+//            Padding(
+//              padding: EdgeInsets.only(left: 15),
+//              child: Container(
+//                height: 30,
+//                alignment: Alignment.centerLeft,
+//                child: Text('本金：${sum.toStringAsFixed(2)}元'),
+//              ),
+//            ),
+
             int.parse(item['status'])  == 1?
 
             Padding(
@@ -300,7 +324,7 @@ class _TaskOrderState extends State<TaskOrder> {
                       child: MaterialButton(
                         padding: EdgeInsets.all(0),
                         color: Colors.blue,
-                        child: Text('确认并完成订单',style: TextStyle(color: Colors.white),),
+                        child: Text('开始任务',style: TextStyle(color: Colors.white),),
                         onPressed: (){
 
                           Route_all.push(context, Complete(dataList[index]['id'],(){

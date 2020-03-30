@@ -97,7 +97,7 @@ class _BlindTbState extends State<BlindTb> {
               left: 0,
               right: 0,
               top: 0,
-              bottom: 50,
+              bottom: widget. data['status'] == '0'||widget. data['status'] == '1'?0:50,
               child:ListView(
                 children: <Widget>[
 
@@ -443,7 +443,12 @@ class _BlindTbState extends State<BlindTb> {
             height: 100,
             child: GestureDetector(
               onTap: (){
-                alert(index);
+                if(widget. data['status'] == '0'||widget. data['status'] == '1'){
+
+                }else{
+                  alert(index);
+                }
+
               },
               child: image,
             ),

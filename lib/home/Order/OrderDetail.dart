@@ -152,18 +152,19 @@ class _OrderDetailState extends State<OrderDetail> {
               ),
               Positioned(
                   left: 120,
+                  right: 15,
                   top: 10,
-                  child: Text('商品名称：${orderInfo['goods_name']}')
-              ),
-              Positioned(
-                  left: 120,
-                  top: 40,
-                  child: Text('商品成交价格：${orderInfo['goods_deal_price']}元')
+                  child: Text('商品名称：${orderInfo['goods_name']}',maxLines: 3,style: TextStyle(fontSize: MediaQuery.of(context).size.width/414*15),)
               ),
               Positioned(
                   left: 120,
                   top: 70,
-                  child: Text('每单商品数量：${orderInfo['goods_count']}件')
+                  child: Text('商品成交价格：${orderInfo['goods_deal_price']}元',style: TextStyle(fontSize: MediaQuery.of(context).size.width/414*14))
+              ),
+              Positioned(
+                  left: 120,
+                  top: 90,
+                  child: Text('每单商品数量：${orderInfo['goods_count']}件',style: TextStyle(fontSize: MediaQuery.of(context).size.width/414*14))
               ),
               Positioned(
                   height: 25,
@@ -241,18 +242,19 @@ class _OrderDetailState extends State<OrderDetail> {
                   ),
                   Positioned(
                       left: 120,
+                      right: 15,
                       top: 10,
-                      child: Text('商品名称：${items[i]['goods_name']}')
-                  ),
-                  Positioned(
-                      left: 120,
-                      top: 40,
-                      child: Text('商品成交价格：${items[i]['goods_deal_price']}元')
+                      child: Text('商品名称：${items[i]['goods_name']}',maxLines: 3,style: TextStyle(fontSize: MediaQuery.of(context).size.width/414*15),)
                   ),
                   Positioned(
                       left: 120,
                       top: 70,
-                      child: Text('每单商品数量：${items[i]['goods_count']}件')
+                      child: Text('商品成交价格：${items[i]['goods_deal_price']}元',style: TextStyle(fontSize: MediaQuery.of(context).size.width/414*14))
+                  ),
+                  Positioned(
+                      left: 120,
+                      top: 90,
+                      child: Text('每单商品数量：${items[i]['goods_count']}件',style: TextStyle(fontSize: MediaQuery.of(context).size.width/414*14))
                   ),
                   Positioned(
                       height: 25,

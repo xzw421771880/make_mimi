@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:make_mimi/config/router_utils.dart';
-import 'package:make_mimi/home/Complain/CommissionRecord.dart';
+import 'package:make_mimi/home/money/CommissionRecord.dart';
 import 'package:make_mimi/utils/com_service.dart';
 
 
@@ -210,7 +210,7 @@ class _InviteRecordState extends State<InviteRecord> {
     return GestureDetector(
       onTap: (){
         if (index == 1){
-          Route_all.push(context, CommissionRecord());
+          Route_all.push(context, CommissionRecord("佣金记录",''));
         }
       },
       child: Container(

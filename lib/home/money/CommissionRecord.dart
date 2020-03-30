@@ -6,6 +6,10 @@ import 'package:make_mimi/utils/com_service.dart';
 
 class CommissionRecord extends StatefulWidget {
 
+  String title;
+  String type;
+
+  CommissionRecord(this.title,this.type);
 
   @override
   _CommissionRecordState createState() => _CommissionRecordState();
@@ -29,7 +33,7 @@ class _CommissionRecordState extends State<CommissionRecord> {
     Map<String, dynamic> map = Map();
     map.putIfAbsent("page", () => 1);
     map.putIfAbsent("pageSize", () => 20);
-//    map.putIfAbsent("type", () => widget.type);
+    map.putIfAbsent("type", () => widget.type);
     Com_Service().post(map, "/user/operatin", (response) {
       print("提现记录");
       print(response);
@@ -53,7 +57,7 @@ class _CommissionRecordState extends State<CommissionRecord> {
         appBar: AppBar(
 //        textTheme: TextTheme(subtitle: "充币"),
           backgroundColor: Colors.white,
-          title: Text('资产明细', style: TextStyle(fontSize: 15,
+          title: Text(widget.title, style: TextStyle(fontSize: 15,
             fontWeight: FontWeight.bold,
             color: Color(0xff333333),),),
           leading: new IconButton(icon: Icon(Icons.arrow_back_ios),
@@ -84,6 +88,7 @@ class _CommissionRecordState extends State<CommissionRecord> {
       Map type = mydata['range']['type'];
       String time = Helps().strToDate(int.parse(model['created_at']));
       print(time);
+      print(model);
       listStr = [model['id'],type[model['type']],model['amount'],time];
     }
 
